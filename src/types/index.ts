@@ -1,5 +1,4 @@
 // Type Definitions
-// export * from './game';
+export * from "./game";
 
-// Placeholder for future type exports
-export {};
+// 三目並べゲームで使用する全ての型定義をエクスポート
