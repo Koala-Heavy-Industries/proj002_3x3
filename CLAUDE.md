@@ -9,20 +9,39 @@ Next.js + TypeScriptを使用した3x3の三目並べゲームアプリケーシ
 
 ### フロントエンド
 
-- **Next.js 14+** (App Router)
-- **TypeScript**
-- **Tailwind CSS** (スタイリング)
+- **Next.js 15.3.4** (App Router) - ✅ 構築済み
+- **TypeScript** - ✅ 構築済み
+- **Tailwind CSS v4** (スタイリング) - ✅ 構築済み
 - **React Hooks** (状態管理)
 
 ### 開発環境
 
-- **ESLint** (コード品質)
-- **Prettier** (フォーマット)
+- **ESLint 9** (コード品質) - ✅ 構築済み
+- **Prettier 3.6.2** (フォーマット) - ✅ 構築済み
 
 ### データ永続化
 
 - **localStorage** (JSON形式) - 初期実装
 - **Firebase/Supabase** 対応可能な設計
+
+## 開発コマンド
+
+```bash
+# 開発サーバー起動
+npm run dev
+
+# ビルド実行
+npm run build
+
+# コードチェック
+npm run lint
+
+# フォーマット実行
+npm run format
+
+# フォーマット確認
+npm run format:check
+```
 
 ## 機能要件
 
@@ -118,27 +137,31 @@ class FirebaseRepository implements GameRepository {
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # メインページ
-│   ├── history/           # 棋譜履歴ページ
-│   └── layout.tsx         # ルートレイアウト
-├── components/            # UIコンポーネント
-│   ├── GameBoard.tsx      # ゲームボード
-│   ├── GameHistory.tsx    # 棋譜履歴
-│   ├── GameReplay.tsx     # 棋譜再生
-│   └── ThemeToggle.tsx    # ダークモード切り替え
-├── hooks/                 # カスタムフック
-│   ├── useGame.ts         # ゲーム状態管理
-│   ├── useGameHistory.ts  # 棋譜履歴管理
-│   └── useTheme.ts        # テーマ管理
-├── lib/                   # ビジネスロジック
-│   ├── gameLogic.ts       # ゲームロジック
-│   ├── aiPlayer.ts        # AI実装
-│   └── repository.ts      # データアクセス
-├── types/                 # 型定義
-│   └── game.ts            # ゲーム関連型
-└── styles/                # スタイル
-    └── globals.css        # グローバルCSS
+├── app/                    # Next.js App Router ✅
+│   ├── page.tsx           # メインページ ✅
+│   ├── layout.tsx         # ルートレイアウト ✅
+│   ├── globals.css        # グローバルCSS ✅
+│   ├── favicon.ico        # ファビコン ✅
+│   └── history/           # 棋譜履歴ページ (予定)
+├── components/            # UIコンポーネント ✅
+│   ├── index.ts           # エクスポート用 ✅
+│   ├── GameBoard.tsx      # ゲームボード (予定)
+│   ├── GameHistory.tsx    # 棋譜履歴 (予定)
+│   ├── GameReplay.tsx     # 棋譜再生 (予定)
+│   └── ThemeToggle.tsx    # ダークモード切り替え (予定)
+├── hooks/                 # カスタムフック ✅
+│   ├── index.ts           # エクスポート用 ✅
+│   ├── useGame.ts         # ゲーム状態管理 (予定)
+│   ├── useGameHistory.ts  # 棋譜履歴管理 (予定)
+│   └── useTheme.ts        # テーマ管理 (予定)
+├── lib/                   # ビジネスロジック ✅
+│   ├── index.ts           # エクスポート用 ✅
+│   ├── gameLogic.ts       # ゲームロジック (予定)
+│   ├── aiPlayer.ts        # AI実装 (予定)
+│   └── repository.ts      # データアクセス (予定)
+└── types/                 # 型定義 ✅
+    ├── index.ts           # エクスポート用 ✅
+    └── game.ts            # ゲーム関連型 (次のタスク)
 ```
 
 ### コンポーネント設計
@@ -169,12 +192,12 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
 
 ## 実装フェーズ
 
-### Phase 1: 基盤構築
+### Phase 1: 基盤構築 - ✅ 3/4 完了
 
-1. Next.js + TypeScript プロジェクトセットアップ
-2. Tailwind CSS, ESLint, Prettier 設定
-3. 基本的なプロジェクト構造作成
-4. 型定義の実装
+1. ✅ Next.js + TypeScript プロジェクトセットアップ
+2. ✅ Tailwind CSS, ESLint, Prettier 設定
+3. ✅ 基本的なプロジェクト構造作成
+4. 型定義の実装 (次のタスク)
 
 ### Phase 2: コア機能
 
