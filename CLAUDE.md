@@ -8,39 +8,46 @@ Next.js + TypeScriptを使用した3x3の三目並べゲームアプリケーシ
 ## 技術スタック
 
 ### フロントエンド
+
 - **Next.js 14+** (App Router)
 - **TypeScript**
 - **Tailwind CSS** (スタイリング)
 - **React Hooks** (状態管理)
 
 ### 開発環境
+
 - **ESLint** (コード品質)
 - **Prettier** (フォーマット)
 
 ### データ永続化
+
 - **localStorage** (JSON形式) - 初期実装
 - **Firebase/Supabase** 対応可能な設計
 
 ## 機能要件
 
 ### 基本ゲーム機能
+
 - ✅ 3x3ゲームボード
 - ✅ プレイヤー交代 (X / O)
 - ✅ 勝利判定 (縦・横・斜め)
 - ✅ 引き分け判定
 
 ### 対戦モード
+
 - ✅ **人 vs 人** (同一デバイス)
 - ✅ **人 vs コンピュータ** (ランダムAI)
 - ✅ **先攻・後攻選択** (プレイヤーが選択可能)
 
 ### 棋譜機能
+
 - ✅ **棋譜記録** (手順・タイムスタンプ)
 - ✅ **棋譜履歴** (過去のゲーム保存)
 - ✅ **棋譜再生** (手順を順番に再現)
 - ✅ **個別削除** (選択した棋譜のみ削除)
 
 ### UI/UX機能
+
 - ✅ **レスポンシブ対応** (モバイル・タブレット)
 - ✅ **ダークモード対応** (ライト/ダーク切り替え)
 - ✅ **アニメーション**
@@ -55,28 +62,28 @@ Next.js + TypeScriptを使用した3x3の三目並べゲームアプリケーシ
 ```typescript
 // ゲーム記録の型定義
 interface GameRecord {
-  id: string                    // ユニークID
-  timestamp: number             // ゲーム開始時刻
-  gameMode: 'pvp' | 'pvc'      // 対戦モード
-  moves: Move[]                 // 手順リスト
-  result: 'X' | 'O' | 'draw'   // 結果
-  duration: number              // ゲーム時間(秒)
+  id: string; // ユニークID
+  timestamp: number; // ゲーム開始時刻
+  gameMode: "pvp" | "pvc"; // 対戦モード
+  moves: Move[]; // 手順リスト
+  result: "X" | "O" | "draw"; // 結果
+  duration: number; // ゲーム時間(秒)
 }
 
 // 手順の型定義
 interface Move {
-  player: 'X' | 'O'           // プレイヤー
-  position: number             // 位置 (0-8)
-  timestamp: number            // 手を打った時刻
+  player: "X" | "O"; // プレイヤー
+  position: number; // 位置 (0-8)
+  timestamp: number; // 手を打った時刻
 }
 
 // ゲーム状態の型定義
 interface GameState {
-  board: (null | 'X' | 'O')[]  // ボード状態
-  currentPlayer: 'X' | 'O'     // 現在のプレイヤー
-  gameStatus: 'playing' | 'finished' | 'draw'
-  winner: null | 'X' | 'O'
-  moves: Move[]
+  board: (null | "X" | "O")[]; // ボード状態
+  currentPlayer: "X" | "O"; // 現在のプレイヤー
+  gameStatus: "playing" | "finished" | "draw";
+  winner: null | "X" | "O";
+  moves: Move[];
 }
 ```
 
@@ -85,18 +92,18 @@ interface GameState {
 ```typescript
 // リポジトリインターフェース (抽象化)
 interface GameRepository {
-  saveGame(game: GameRecord): Promise<void>
-  loadGames(): Promise<GameRecord[]>
-  deleteGame(id: string): Promise<void>
+  saveGame(game: GameRecord): Promise<void>;
+  loadGames(): Promise<GameRecord[]>;
+  deleteGame(id: string): Promise<void>;
 }
 
 // localStorage実装
 class LocalStorageRepository implements GameRepository {
-  private readonly STORAGE_KEY = 'tic-tac-toe-games'
-  
-  async saveGame(game: GameRecord): Promise<void>
-  async loadGames(): Promise<GameRecord[]>
-  async deleteGame(id: string): Promise<void>
+  private readonly STORAGE_KEY = "tic-tac-toe-games";
+
+  async saveGame(game: GameRecord): Promise<void>;
+  async loadGames(): Promise<GameRecord[]>;
+  async deleteGame(id: string): Promise<void>;
 }
 
 // 将来のクラウドDB実装
@@ -139,59 +146,65 @@ src/
 ```typescript
 // メインゲームコンポーネント
 const GameBoard: React.FC = () => {
-  const { gameState, makeMove, resetGame } = useGame()
-  const { saveGame } = useGameHistory()
-  
+  const { gameState, makeMove, resetGame } = useGame();
+  const { saveGame } = useGameHistory();
+
   // ゲームロジック実装
-}
+};
 
 // 棋譜履歴コンポーネント
 const GameHistory: React.FC = () => {
-  const { games, deleteGame } = useGameHistory()
-  
+  const { games, deleteGame } = useGameHistory();
+
   // 履歴表示・削除機能
-}
+};
 
 // 棋譜再生コンポーネント
 const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
-  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
-  
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
+
   // 再生機能実装
-}
+};
 ```
 
 ## 実装フェーズ
 
 ### Phase 1: 基盤構築
+
 1. Next.js + TypeScript プロジェクトセットアップ
 2. Tailwind CSS, ESLint, Prettier 設定
 3. 基本的なプロジェクト構造作成
 4. 型定義の実装
 
 ### Phase 2: コア機能
+
 5. ゲームロジック実装
 6. ゲームボードコンポーネント
 7. 人vs人モード
 8. 勝利判定・ゲーム終了処理
 
 ### Phase 3: AI・棋譜機能
+
 9. ランダムAI実装
 10. 棋譜記録機能
 11. LocalStorageRepository実装
 12. 棋譜履歴表示
 
 ### Phase 4: 高度な機能
+
 13. 棋譜再生機能
 14. 先攻・後攻選択
 15. 個別削除機能
 
 ### Phase 5: UI/UX改善
+
 16. ダークモード対応
 17. レスポンシブ対応
 18. アニメーション実装
 19. リセット機能
 
 ### Phase 6: 最終調整
+
 20. テスト・バグ修正
 21. パフォーマンス最適化
 22. ドキュメント整備
@@ -199,11 +212,13 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
 ## 将来の拡張性
 
 ### クラウドDB移行
+
 - インターフェースは変更せず、実装のみ変更
 - JSONデータ形式はそのまま利用可能
 - 認証機能追加時もデータ構造は維持
 
 ### 機能拡張案
+
 - マルチプレイヤー対応
 - AI難易度調整
 - ゲーム統計表示
@@ -213,16 +228,19 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
 ## 技術的考慮事項
 
 ### パフォーマンス
+
 - React.memo でコンポーネント最適化
 - useMemo/useCallback で再レンダリング制御
 - lazy loading で初期読み込み時間短縮
 
 ### アクセシビリティ
+
 - キーボード操作対応
 - スクリーンリーダー対応
 - コントラスト比確保
 
 ### セキュリティ
+
 - XSS対策 (React標準で対応)
 - データ検証 (型システムで対応)
 - localStorage容量制限対応
