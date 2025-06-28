@@ -19,6 +19,12 @@ Next.js + TypeScriptを使用した3x3の三目並べゲームアプリケーシ
 - **ESLint 9** (コード品質) - ✅ 構築済み
 - **Prettier 3.6.2** (フォーマット) - ✅ 構築済み
 
+### テスト環境
+
+- **Jest 30.0.3** (テストフレームワーク) - ✅ 構築済み
+- **@testing-library/react** (Reactテスト) - ✅ 構築済み
+- **@testing-library/jest-dom** (DOM拡張) - ✅ 構築済み
+
 ### データ永続化
 
 - **localStorage** (JSON形式) - 初期実装
@@ -41,6 +47,15 @@ npm run format
 
 # フォーマット確認
 npm run format:check
+
+# テスト実行
+npm test
+
+# テスト（ウォッチモード）
+npm run test:watch
+
+# テストカバレッジ確認
+npm run test:coverage
 ```
 
 ## 機能要件
@@ -156,12 +171,14 @@ src/
 │   └── useTheme.ts        # テーマ管理 (予定)
 ├── lib/                   # ビジネスロジック ✅
 │   ├── index.ts           # エクスポート用 ✅
-│   ├── gameLogic.ts       # ゲームロジック (予定)
+│   ├── gameLogic.ts       # ゲームロジック ✅
+│   ├── __tests__/         # テストファイル ✅
+│   │   └── gameLogic.test.ts # ゲームロジックテスト ✅
 │   ├── aiPlayer.ts        # AI実装 (予定)
 │   └── repository.ts      # データアクセス (予定)
 └── types/                 # 型定義 ✅
     ├── index.ts           # エクスポート用 ✅
-    └── game.ts            # ゲーム関連型 (次のタスク)
+    └── game.ts            # ゲーム関連型 ✅
 ```
 
 ### コンポーネント設計
@@ -192,16 +209,16 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
 
 ## 実装フェーズ
 
-### Phase 1: 基盤構築 - ✅ 3/4 完了
+### Phase 1: 基盤構築 - ✅ 完了
 
 1. ✅ Next.js + TypeScript プロジェクトセットアップ
 2. ✅ Tailwind CSS, ESLint, Prettier 設定
 3. ✅ 基本的なプロジェクト構造作成
-4. 型定義の実装 (次のタスク)
+4. ✅ 型定義の実装
 
-### Phase 2: コア機能
+### Phase 2: コア機能 - 🚧 1/4 完了
 
-5. ゲームロジック実装
+5. ✅ ゲームロジック実装
 6. ゲームボードコンポーネント
 7. 人vs人モード
 8. 勝利判定・ゲーム終了処理
@@ -228,7 +245,7 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
 
 ### Phase 6: 最終調整
 
-20. テスト・バグ修正
+20. ✅ テストフレームワーク・基本テスト実装
 21. パフォーマンス最適化
 22. ドキュメント整備
 

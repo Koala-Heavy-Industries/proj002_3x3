@@ -1,6 +1,7 @@
 {
   "name": "proj002_3x3",
   "version": "0.1.0",
+  "description": "Next.js + TypeScript で開発された3x3三目並べゲーム。棋譜記録・再生機能とクラウドDB移行を見据えた設計。",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -8,7 +9,10 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "next": "15.3.4",
@@ -18,6 +22,9 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -25,6 +32,8 @@
     "eslint-config-next": "15.3.4",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
+    "jest": "^30.0.3",
+    "jest-environment-jsdom": "^30.0.2",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"
