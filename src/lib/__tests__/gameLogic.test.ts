@@ -21,7 +21,7 @@ describe("gameLogic", () => {
     it("should create an empty board with 9 null cells", () => {
       const board = initializeBoard();
       expect(board).toHaveLength(9);
-      expect(board.every((cell) => cell === null)).toBe(true);
+      expect(board.every(cell => cell === null)).toBe(true);
     });
   });
 
@@ -34,7 +34,17 @@ describe("gameLogic", () => {
     });
 
     it("should return false for occupied cell", () => {
-      const board: BoardCell[] = ["X", null, null, null, null, null, null, null, null];
+      const board: BoardCell[] = [
+        "X",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
       expect(isValidMove(board, 0)).toBe(false);
     });
 
@@ -62,14 +72,36 @@ describe("gameLogic", () => {
     });
 
     it("should throw error for invalid move", () => {
-      const board: BoardCell[] = ["X", null, null, null, null, null, null, null, null];
-      expect(() => makeMove(board, 0, "O")).toThrow("Invalid move: position 0 is not available");
+      const board: BoardCell[] = [
+        "X",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
+      expect(() => makeMove(board, 0, "O")).toThrow(
+        "Invalid move: position 0 is not available"
+      );
     });
   });
 
   describe("checkWinner", () => {
     it("should detect horizontal win - top row", () => {
-      const board: BoardCell[] = ["X", "X", "X", null, null, null, null, null, null];
+      const board: BoardCell[] = [
+        "X",
+        "X",
+        "X",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [0, 1, 2],
@@ -78,7 +110,17 @@ describe("gameLogic", () => {
     });
 
     it("should detect horizontal win - middle row", () => {
-      const board: BoardCell[] = [null, null, null, "O", "O", "O", null, null, null];
+      const board: BoardCell[] = [
+        null,
+        null,
+        null,
+        "O",
+        "O",
+        "O",
+        null,
+        null,
+        null,
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [3, 4, 5],
@@ -87,7 +129,17 @@ describe("gameLogic", () => {
     });
 
     it("should detect horizontal win - bottom row", () => {
-      const board: BoardCell[] = [null, null, null, null, null, null, "X", "X", "X"];
+      const board: BoardCell[] = [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "X",
+        "X",
+        "X",
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [6, 7, 8],
@@ -96,7 +148,17 @@ describe("gameLogic", () => {
     });
 
     it("should detect vertical win - left column", () => {
-      const board: BoardCell[] = ["X", null, null, "X", null, null, "X", null, null];
+      const board: BoardCell[] = [
+        "X",
+        null,
+        null,
+        "X",
+        null,
+        null,
+        "X",
+        null,
+        null,
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [0, 3, 6],
@@ -105,7 +167,17 @@ describe("gameLogic", () => {
     });
 
     it("should detect vertical win - middle column", () => {
-      const board: BoardCell[] = [null, "O", null, null, "O", null, null, "O", null];
+      const board: BoardCell[] = [
+        null,
+        "O",
+        null,
+        null,
+        "O",
+        null,
+        null,
+        "O",
+        null,
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [1, 4, 7],
@@ -114,7 +186,17 @@ describe("gameLogic", () => {
     });
 
     it("should detect vertical win - right column", () => {
-      const board: BoardCell[] = [null, null, "X", null, null, "X", null, null, "X"];
+      const board: BoardCell[] = [
+        null,
+        null,
+        "X",
+        null,
+        null,
+        "X",
+        null,
+        null,
+        "X",
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [2, 5, 8],
@@ -123,7 +205,17 @@ describe("gameLogic", () => {
     });
 
     it("should detect diagonal win - top-left to bottom-right", () => {
-      const board: BoardCell[] = ["X", null, null, null, "X", null, null, null, "X"];
+      const board: BoardCell[] = [
+        "X",
+        null,
+        null,
+        null,
+        "X",
+        null,
+        null,
+        null,
+        "X",
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [0, 4, 8],
@@ -132,7 +224,17 @@ describe("gameLogic", () => {
     });
 
     it("should detect diagonal win - top-right to bottom-left", () => {
-      const board: BoardCell[] = [null, null, "O", null, "O", null, "O", null, null];
+      const board: BoardCell[] = [
+        null,
+        null,
+        "O",
+        null,
+        "O",
+        null,
+        "O",
+        null,
+        null,
+      ];
       const winner = checkWinner(board);
       expect(winner).toEqual({
         positions: [2, 4, 6],
@@ -165,7 +267,17 @@ describe("gameLogic", () => {
     });
 
     it("should return false when there is a winner", () => {
-      const board: BoardCell[] = ["X", "X", "X", "O", "O", null, null, null, null];
+      const board: BoardCell[] = [
+        "X",
+        "X",
+        "X",
+        "O",
+        "O",
+        null,
+        null,
+        null,
+        null,
+      ];
       expect(checkDraw(board)).toBe(false);
     });
 
@@ -177,7 +289,17 @@ describe("gameLogic", () => {
 
   describe("getGameStatus", () => {
     it("should return 'finished' when there is a winner", () => {
-      const board: BoardCell[] = ["X", "X", "X", null, null, null, null, null, null];
+      const board: BoardCell[] = [
+        "X",
+        "X",
+        "X",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
       expect(getGameStatus(board)).toBe("finished");
     });
 
@@ -187,7 +309,17 @@ describe("gameLogic", () => {
     });
 
     it("should return 'playing' when game is ongoing", () => {
-      const board: BoardCell[] = ["X", "O", null, null, null, null, null, null, null];
+      const board: BoardCell[] = [
+        "X",
+        "O",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
       expect(getGameStatus(board)).toBe("playing");
     });
 
@@ -215,7 +347,17 @@ describe("gameLogic", () => {
     });
 
     it("should return only empty positions", () => {
-      const board: BoardCell[] = ["X", null, "O", null, "X", null, null, null, null];
+      const board: BoardCell[] = [
+        "X",
+        null,
+        "O",
+        null,
+        "X",
+        null,
+        null,
+        null,
+        null,
+      ];
       const positions = getAvailablePositions(board);
       expect(positions).toEqual([1, 3, 5, 6, 7, 8]);
     });
@@ -253,7 +395,7 @@ describe("gameLogic", () => {
 
     it("should detect win and set correct game status", () => {
       let gameState = createInitialGameState("X");
-      
+
       // X wins with top row
       gameState = updateGameState(gameState, 0); // X
       gameState = updateGameState(gameState, 3); // O
@@ -269,8 +411,18 @@ describe("gameLogic", () => {
     it("should detect draw", () => {
       // Test draw detection with a manually constructed draw board
       // Board: O X O / X X O / O O X (verified draw pattern)
-      const drawBoard: BoardCell[] = ["O", "X", "O", "X", "X", "O", "O", "O", "X"];
-      
+      const drawBoard: BoardCell[] = [
+        "O",
+        "X",
+        "O",
+        "X",
+        "X",
+        "O",
+        "O",
+        "O",
+        "X",
+      ];
+
       expect(checkWinner(drawBoard)).toBe(null);
       expect(checkDraw(drawBoard)).toBe(true);
       expect(getGameStatus(drawBoard)).toBe("draw");
@@ -279,10 +431,10 @@ describe("gameLogic", () => {
     it("should track move history correctly", () => {
       let gameState = createInitialGameState("X");
       const timestamp1 = Date.now();
-      
+
       gameState = updateGameState(gameState, 0);
       gameState = updateGameState(gameState, 4);
-      
+
       expect(gameState.moves).toHaveLength(2);
       expect(gameState.moves[0].player).toBe("X");
       expect(gameState.moves[0].position).toBe(0);
@@ -295,7 +447,7 @@ describe("gameLogic", () => {
   describe("createInitialGameState", () => {
     it("should create initial state with X as default starting player", () => {
       const state = createInitialGameState();
-      
+
       expect(state.board).toEqual(initializeBoard());
       expect(state.currentPlayer).toBe("X");
       expect(state.gameStatus).toBe("playing");
@@ -305,7 +457,7 @@ describe("gameLogic", () => {
 
     it("should create initial state with specified starting player", () => {
       const state = createInitialGameState("O");
-      
+
       expect(state.currentPlayer).toBe("O");
       expect(state.gameStatus).toBe("playing");
     });
@@ -314,7 +466,7 @@ describe("gameLogic", () => {
   describe("Integration tests", () => {
     it("should play a complete game with X winning", () => {
       let gameState = createInitialGameState("X");
-      
+
       // Game: X wins with diagonal
       const moves = [
         { pos: 0, expectedPlayer: "X" }, // X
@@ -338,16 +490,16 @@ describe("gameLogic", () => {
     it("should play a complete game ending in draw", () => {
       // Test updateGameState with a board that results in draw after final move
       let gameState = createInitialGameState("X");
-      
+
       // Start with a near-draw board and make the final move
       // Board before final move: O X O / X X O / O O -
       gameState.board = ["O", "X", "O", "X", "X", "O", "O", "O", null];
       gameState.currentPlayer = "X";
       gameState.moves = []; // Don't care about move history for this test
-      
+
       // Make the final move that should result in draw
       const finalState = updateGameState(gameState, 8);
-      
+
       expect(finalState.gameStatus).toBe("draw");
       expect(finalState.winner).toBe(null);
     });
