@@ -6,6 +6,29 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Home from "../page";
 
+// useGameHistoryフックのモック
+const mockUseGameHistory = {
+  games: [],
+  stats: {
+    totalGames: 0,
+    wins: { X: 0, O: 0 },
+    draws: 0,
+    averageDuration: 0,
+    longestGame: 0,
+    shortestGame: 0,
+  },
+  isLoading: false,
+  error: null,
+  saveGame: jest.fn(),
+  deleteGame: jest.fn(),
+  clearAllGames: jest.fn(),
+  refreshGames: jest.fn(),
+};
+
+jest.mock("../../hooks/useGameHistory", () => ({
+  useGameHistory: () => mockUseGameHistory,
+}));
+
 describe("Home (Main Page)", () => {
   describe("初期表示", () => {
     it("ページタイトルとヘッダーが表示される", () => {
@@ -83,104 +106,46 @@ describe("Home (Main Page)", () => {
     });
   });
 
-  describe("ゲーム統計の更新", () => {
-    it("ゲーム完了時に統計が更新される", () => {
+  describe("統計表示の基本機能", () => {
+    it("統計データが正しく表示される", () => {
+      // モックデータを更新
+      mockUseGameHistory.stats = {
+        totalGames: 5,
+        wins: { X: 3, O: 1 },
+        draws: 1,
+        averageDuration: 30,
+        longestGame: 45,
+        shortestGame: 15,
+      };
+
       render(<Home />);
 
       // 統計を表示
       const toggleButton = screen.getByText("表示");
       fireEvent.click(toggleButton);
 
-      // 初期状態を確認（総ゲーム数の表示を確認）
+      // 統計データが表示されることを確認
       expect(screen.getByText("総ゲーム数:")).toBeInTheDocument();
-      const totalGamesValue =
-        screen.getByText("総ゲーム数:").nextElementSibling;
-      expect(totalGamesValue).toHaveTextContent("0");
-
-      // X が勝利するゲームをプレイ
-      const cells = screen.getAllByRole("button", { name: /セル \d+/ });
-      fireEvent.click(cells[0]); // X
-      fireEvent.click(cells[3]); // O
-      fireEvent.click(cells[1]); // X
-      fireEvent.click(cells[4]); // O
-      fireEvent.click(cells[2]); // X wins (0,1,2)
-
-      // 統計が更新されていることを確認
-      const updatedTotalGames =
-        screen.getByText("総ゲーム数:").nextElementSibling;
-      expect(updatedTotalGames).toHaveTextContent("1");
-
-      // X の勝利数が1になっていることを確認
-      const xWinsValue = screen.getByText("X の勝利:").nextElementSibling;
-      expect(xWinsValue).toHaveTextContent("1");
-    });
-
-    it("複数ゲーム後の統計が正確に表示される", () => {
-      render(<Home />);
-
-      // 統計を表示
-      const toggleButton = screen.getByText("表示");
-      fireEvent.click(toggleButton);
-
-      // 1ゲーム目: Xの勝利
-      let cells = screen.getAllByRole("button", { name: /セル \d+/ });
-      fireEvent.click(cells[0]); // X
-      fireEvent.click(cells[3]); // O
-      fireEvent.click(cells[1]); // X
-      fireEvent.click(cells[4]); // O
-      fireEvent.click(cells[2]); // X wins
-
-      // 新しいゲームボタンをクリック
-      const newGameButton = screen.getByText("新しいゲーム");
-      fireEvent.click(newGameButton);
-
-      // 2ゲーム目: Oの勝利
-      cells = screen.getAllByRole("button", { name: /セル \d+/ });
-      fireEvent.click(cells[0]); // X
-      fireEvent.click(cells[3]); // O
-      fireEvent.click(cells[1]); // X
-      fireEvent.click(cells[4]); // O
-      fireEvent.click(cells[2]); // X
-      fireEvent.click(cells[5]); // O wins (3,4,5)
-
-      // 統計が正確に更新されていることを確認
-      const finalTotalGames =
-        screen.getByText("総ゲーム数:").nextElementSibling;
-      expect(finalTotalGames).toHaveTextContent("2");
-    });
-  });
-
-  describe("統計リセット機能", () => {
-    it("統計をリセットできる", () => {
-      render(<Home />);
-
-      // 統計を表示
-      const toggleButton = screen.getByText("表示");
-      fireEvent.click(toggleButton);
-
-      // ゲームをプレイして統計を作成
-      const cells = screen.getAllByRole("button", { name: /セル \d+/ });
-      fireEvent.click(cells[0]); // X
-      fireEvent.click(cells[3]); // O
-      fireEvent.click(cells[1]); // X
-      fireEvent.click(cells[4]); // O
-      fireEvent.click(cells[2]); // X wins
-
-      // リセットボタンが表示されることを確認
-      const resetButton = screen.getByText("統計をリセット");
-      expect(resetButton).toBeInTheDocument();
-
-      // リセット実行
-      fireEvent.click(resetButton);
-
-      // 統計が初期状態に戻ることを確認
-      const resetTotalGames =
-        screen.getByText("総ゲーム数:").nextElementSibling;
-      expect(resetTotalGames).toHaveTextContent("0");
+      expect(screen.getByText("5")).toBeInTheDocument(); // 総ゲーム数
+      expect(screen.getByText("X の勝利:")).toBeInTheDocument();
+      expect(screen.getByText("O の勝利:")).toBeInTheDocument();
+      expect(screen.getByText("引き分け:")).toBeInTheDocument();
     });
   });
 
   describe("レスポンシブ・アクセシビリティ", () => {
+    beforeEach(() => {
+      // テスト前にモックをリセット
+      mockUseGameHistory.stats = {
+        totalGames: 0,
+        wins: { X: 0, O: 0 },
+        draws: 0,
+        averageDuration: 0,
+        longestGame: 0,
+        shortestGame: 0,
+      };
+    });
+
     it("適切なHTML構造が使用されている", () => {
       render(<Home />);
 

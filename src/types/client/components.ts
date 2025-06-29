@@ -8,13 +8,14 @@ import type {
   GameResult,
   BoardPosition,
   GameConfig,
+  GameRecord,
 } from "../common/game";
 
 // 基本イベントハンドラー型
 export type CellClickHandler = (position: BoardPosition) => void;
 export type GameResetHandler = () => void;
 export type GameModeChangeHandler = (mode: GameMode) => void;
-export type GameEndHandler = (result: GameResult) => void;
+export type GameEndHandler = (gameRecord: GameRecord) => void;
 export type MoveStartHandler = (position: BoardPosition) => void;
 export type MoveCompleteHandler = (
   position: BoardPosition,

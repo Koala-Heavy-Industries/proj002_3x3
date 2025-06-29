@@ -168,7 +168,11 @@ describe("GameBoard", () => {
       fireEvent.click(cells[4]); // O
       fireEvent.click(cells[2]); // X wins
 
-      expect(onGameEnd).toHaveBeenCalledWith("X");
+      expect(onGameEnd).toHaveBeenCalledTimes(1);
+      const calledWith = onGameEnd.mock.calls[0][0];
+      expect(calledWith.result).toBe("X");
+      expect(calledWith.gameMode).toBe("pvp");
+      expect(calledWith.moves).toHaveLength(5);
     });
 
     it("引き分け時にonGameEndが呼ばれる", () => {
@@ -188,7 +192,11 @@ describe("GameBoard", () => {
       fireEvent.click(cells[6]); // O
       fireEvent.click(cells[8]); // X
 
-      expect(onGameEnd).toHaveBeenCalledWith("draw");
+      expect(onGameEnd).toHaveBeenCalledTimes(1);
+      const calledWith = onGameEnd.mock.calls[0][0];
+      expect(calledWith.result).toBe("draw");
+      expect(calledWith.gameMode).toBe("pvp");
+      expect(calledWith.moves).toHaveLength(9);
     });
   });
 });

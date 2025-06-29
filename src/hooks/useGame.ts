@@ -2,12 +2,13 @@
  * ゲーム状態管理フック
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type {
   GameState,
   BoardPosition,
   Player,
   GameConfig,
+  GameRecord,
 } from "../types/common/game";
 import { createInitialGameState, updateGameState } from "../lib/gameLogic";
 import { getAIMove } from "../lib/aiPlayer";
@@ -26,9 +27,13 @@ export interface UseGameReturn {
 /**
  * ゲーム状態を管理するカスタムフック
  * @param config ゲーム設定（オプション）
+ * @param onGameEnd ゲーム終了時のコールバック（棋譜記録用）
  * @returns ゲーム状態と操作関数
  */
-export function useGame(config?: Partial<GameConfig>): UseGameReturn {
+export function useGame(
+  config?: Partial<GameConfig>,
+  onGameEnd?: (gameRecord: GameRecord) => void
+): UseGameReturn {
   // 初期プレイヤーを設定（デフォルトはX）
   const initialPlayer: Player = config?.playerXStarts !== false ? "X" : "O";
 
@@ -41,6 +46,9 @@ export function useGame(config?: Partial<GameConfig>): UseGameReturn {
   const [gameMode, setGameMode] = useState<"pvp" | "pvc">(
     config?.mode || "pvp"
   );
+
+  // ゲーム開始時刻の記録
+  const gameStartTime = useRef<number>(Date.now());
 
   // AIが O プレイヤーかどうか（PvCモードでは人間がX、AIがO）
   const aiPlayer: Player = "O";
@@ -98,12 +106,34 @@ export function useGame(config?: Partial<GameConfig>): UseGameReturn {
   );
 
   /**
+   * ゲーム終了時のコールバック実行
+   */
+  const handleGameEnd = useCallback(
+    (finalGameState: GameState) => {
+      if (onGameEnd && finalGameState.gameStatus !== "playing") {
+        const gameRecord: GameRecord = {
+          id: `game-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          timestamp: gameStartTime.current,
+          gameMode,
+          moves: finalGameState.moves,
+          result: finalGameState.winner || "draw",
+          duration: Math.floor((Date.now() - gameStartTime.current) / 1000),
+          playerXStarts: initialPlayer === "X",
+        };
+        onGameEnd(gameRecord);
+      }
+    },
+    [onGameEnd, gameMode, initialPlayer]
+  );
+
+  /**
    * ゲームをリセット
    */
   const resetGame = useCallback(
     (startingPlayer?: Player) => {
       const player = startingPlayer || initialPlayer;
       setGameState(createInitialGameState(player));
+      gameStartTime.current = Date.now(); // 新しいゲーム開始時刻を記録
     },
     [initialPlayer]
   );
@@ -124,6 +154,13 @@ export function useGame(config?: Partial<GameConfig>): UseGameReturn {
    * ゲームが終了しているかどうか
    */
   const isGameFinished = gameState.gameStatus !== "playing";
+
+  // ゲーム終了時の処理
+  useEffect(() => {
+    if (isGameFinished) {
+      handleGameEnd(gameState);
+    }
+  }, [isGameFinished, handleGameEnd, gameState]);
 
   return {
     gameState,

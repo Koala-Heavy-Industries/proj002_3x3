@@ -31,21 +31,9 @@ export function GameBoard({
     gameMode,
     setGameMode,
     isAITurn,
-  } = useGame(config);
+  } = useGame(config, onGameEnd);
 
-  // ゲーム終了時の処理（前の状態との比較で実行を制御）
-  const [hasNotifiedGameEnd, setHasNotifiedGameEnd] = React.useState(false);
-
-  React.useEffect(() => {
-    if (isGameFinished && onGameEnd && !hasNotifiedGameEnd) {
-      const result = gameState.winner || "draw";
-      onGameEnd(result);
-      setHasNotifiedGameEnd(true);
-    } else if (!isGameFinished && hasNotifiedGameEnd) {
-      // ゲームがリセットされたら通知フラグもリセット
-      setHasNotifiedGameEnd(false);
-    }
-  }, [isGameFinished, gameState.winner, onGameEnd, hasNotifiedGameEnd]);
+  // 棋譜記録機能はuseGameフック内で処理されるため、ここでは削除
 
   /**
    * セルクリックハンドラ

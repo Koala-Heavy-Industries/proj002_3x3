@@ -1,80 +1,123 @@
 /**
- * ゲーム履歴管理用カスタムフック
+ * ゲーム履歴管理フック
  */
 
-import { useCallback } from "react";
-import { useLocalStorage } from "./useLocalStorage";
-import type { GameRecord } from "../types/common/game";
-import type { UseGameHistoryReturn } from "../types/client/hooks";
+import { useState, useEffect, useCallback } from "react";
+import type { GameRecord, GameStats } from "../types/game";
+import { gameRepository } from "../lib/repository";
 
-const STORAGE_KEY = "tic-tac-toe-games";
-const MAX_RECORDS = 100; // 最大保存件数
+export interface UseGameHistoryReturn {
+  games: GameRecord[];
+  stats: GameStats;
+  isLoading: boolean;
+  error: string | null;
+  saveGame: (game: GameRecord) => Promise<void>;
+  deleteGame: (id: string) => Promise<void>;
+  clearAllGames: () => Promise<void>;
+  refreshGames: () => Promise<void>;
+}
 
 /**
- * ゲーム履歴を管理するフック
- * @returns ゲーム履歴の操作機能
+ * ゲーム履歴を管理するカスタムフック
  */
 export function useGameHistory(): UseGameHistoryReturn {
-  const {
-    value: games,
-    setValue: setGames,
-    loading,
-    error,
-  } = useLocalStorage<GameRecord[]>(STORAGE_KEY, []);
+  const [games, setGames] = useState<GameRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // ゲーム保存
-  const saveGame = useCallback(
-    async (game: GameRecord): Promise<void> => {
-      try {
-        setGames(prevGames => {
-          // 新しいゲームを先頭に追加
-          const newGames = [game, ...prevGames];
-
-          // 最大件数制限
-          if (newGames.length > MAX_RECORDS) {
-            return newGames.slice(0, MAX_RECORDS);
-          }
-
-          return newGames;
-        });
-      } catch (err) {
-        console.error("Failed to save game:", err);
-        throw err instanceof Error ? err : new Error(String(err));
-      }
-    },
-    [setGames]
-  );
-
-  // ゲーム削除
-  const deleteGame = useCallback(
-    async (id: string): Promise<void> => {
-      try {
-        setGames(prevGames => prevGames.filter(game => game.id !== id));
-      } catch (err) {
-        console.error("Failed to delete game:", err);
-        throw err instanceof Error ? err : new Error(String(err));
-      }
-    },
-    [setGames]
-  );
-
-  // 履歴全削除
-  const clearHistory = useCallback(async (): Promise<void> => {
+  /**
+   * ゲーム履歴を読み込み
+   */
+  const refreshGames = useCallback(async () => {
     try {
-      setGames([]);
+      setIsLoading(true);
+      setError(null);
+      const loadedGames = await gameRepository.loadGames();
+      setGames(loadedGames);
     } catch (err) {
-      console.error("Failed to clear history:", err);
-      throw err instanceof Error ? err : new Error(String(err));
+      setError(err instanceof Error ? err.message : "ゲーム履歴の読み込みに失敗しました");
+    } finally {
+      setIsLoading(false);
     }
-  }, [setGames]);
+  }, []);
+
+  /**
+   * ゲームを保存
+   */
+  const saveGame = useCallback(async (game: GameRecord) => {
+    try {
+      setError(null);
+      await gameRepository.saveGame(game);
+      await refreshGames(); // 保存後にリフレッシュ
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ゲームの保存に失敗しました");
+      throw err;
+    }
+  }, [refreshGames]);
+
+  /**
+   * ゲームを削除
+   */
+  const deleteGame = useCallback(async (id: string) => {
+    try {
+      setError(null);
+      await gameRepository.deleteGame(id);
+      await refreshGames(); // 削除後にリフレッシュ
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ゲームの削除に失敗しました");
+      throw err;
+    }
+  }, [refreshGames]);
+
+  /**
+   * すべてのゲームを削除
+   */
+  const clearAllGames = useCallback(async () => {
+    try {
+      setError(null);
+      await gameRepository.clearAll();
+      await refreshGames(); // 削除後にリフレッシュ
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "すべてのゲームの削除に失敗しました");
+      throw err;
+    }
+  }, [refreshGames]);
+
+  /**
+   * 統計情報を計算
+   */
+  const stats: GameStats = {
+    totalGames: games.length,
+    wins: {
+      X: games.filter(g => g.result === "X").length,
+      O: games.filter(g => g.result === "O").length,
+    },
+    draws: games.filter(g => g.result === "draw").length,
+    averageDuration: games.length > 0 
+      ? games.reduce((sum, g) => sum + g.duration, 0) / games.length 
+      : 0,
+    longestGame: games.length > 0 
+      ? Math.max(...games.map(g => g.duration)) 
+      : 0,
+    shortestGame: games.length > 0 
+      ? Math.min(...games.map(g => g.duration)) 
+      : 0,
+  };
+
+  // 初回読み込み
+  useEffect(() => {
+    refreshGames();
+  }, [refreshGames]);
 
   return {
     games,
+    stats,
+    isLoading,
+    error,
     saveGame,
     deleteGame,
-    clearHistory,
-    loading,
-    error,
+    clearAllGames,
+    refreshGames,
   };
 }
 

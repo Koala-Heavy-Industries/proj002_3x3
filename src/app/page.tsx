@@ -2,36 +2,33 @@
 
 import React, { useState } from "react";
 import { GameBoard } from "../components/GameBoard";
-import type { GameResult } from "../types/game";
+import { useGameHistory } from "../hooks/useGameHistory";
+import type { GameResult, GameRecord } from "../types/game";
 
 export default function Home() {
-  const [gameHistory, setGameHistory] = useState<{
-    totalGames: number;
-    wins: { X: number; O: number };
-    draws: number;
-  }>({ totalGames: 0, wins: { X: 0, O: 0 }, draws: 0 });
-
+  const { games, stats, saveGame, clearAllGames } = useGameHistory();
   const [showStats, setShowStats] = useState(false);
 
   /**
-   * ゲーム終了時の処理
+   * ゲーム終了時の処理（棋譜記録）
    */
-  const handleGameEnd = (result: GameResult) => {
-    setGameHistory(prev => ({
-      totalGames: prev.totalGames + 1,
-      wins: {
-        X: prev.wins.X + (result === "X" ? 1 : 0),
-        O: prev.wins.O + (result === "O" ? 1 : 0),
-      },
-      draws: prev.draws + (result === "draw" ? 1 : 0),
-    }));
+  const handleGameEnd = async (gameRecord: GameRecord) => {
+    try {
+      await saveGame(gameRecord);
+    } catch (error) {
+      console.error("Failed to save game:", error);
+    }
   };
 
   /**
    * 統計をリセット
    */
-  const resetStats = () => {
-    setGameHistory({ totalGames: 0, wins: { X: 0, O: 0 }, draws: 0 });
+  const resetStats = async () => {
+    try {
+      await clearAllGames();
+    } catch (error) {
+      console.error("Failed to clear games:", error);
+    }
   };
 
   return (
@@ -75,7 +72,7 @@ export default function Home() {
                     総ゲーム数:
                   </span>
                   <span className="font-medium text-gray-800 dark:text-white">
-                    {gameHistory.totalGames}
+                    {stats.totalGames}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -83,7 +80,7 @@ export default function Home() {
                     X の勝利:
                   </span>
                   <span className="font-medium text-blue-600">
-                    {gameHistory.wins.X}
+                    {stats.wins.X}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -91,7 +88,7 @@ export default function Home() {
                     O の勝利:
                   </span>
                   <span className="font-medium text-red-600">
-                    {gameHistory.wins.O}
+                    {stats.wins.O}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -99,10 +96,10 @@ export default function Home() {
                     引き分け:
                   </span>
                   <span className="font-medium text-gray-600">
-                    {gameHistory.draws}
+                    {stats.draws}
                   </span>
                 </div>
-                {gameHistory.totalGames > 0 && (
+                {stats.totalGames > 0 && (
                   <button
                     onClick={resetStats}
                     className="mt-4 w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 text-sm"
