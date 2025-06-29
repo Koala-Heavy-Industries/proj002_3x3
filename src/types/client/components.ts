@@ -70,6 +70,8 @@ export interface StatusDisplayProps {
   className?: string;
   showMoveCount?: boolean;
   moveCount?: number;
+  isAITurn?: boolean;
+  gameMode?: GameMode;
 }
 
 // GameInfo Props型

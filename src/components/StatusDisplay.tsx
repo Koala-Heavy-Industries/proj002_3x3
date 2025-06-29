@@ -15,15 +15,27 @@ export function StatusDisplay({
   showMoveCount = false,
   moveCount = 0,
   className = "",
+  isAITurn = false,
+  gameMode = "pvp",
 }: StatusDisplayProps) {
   // ステータスメッセージを取得
   const getStatusMessage = () => {
     if (gameStatus === "finished") {
+      if (winner && gameMode === "pvc") {
+        return winner === "X" ? "あなたの勝利！" : "コンピュータの勝利！";
+      }
       return winner ? `プレイヤー ${winner} の勝利！` : "引き分け！";
     }
 
     if (gameStatus === "draw") {
       return "引き分け！";
+    }
+
+    if (gameMode === "pvc") {
+      if (isAITurn) {
+        return "コンピュータが考え中...";
+      }
+      return currentPlayer === "X" ? "あなたのターン" : "コンピュータのターン";
     }
 
     return `プレイヤー ${currentPlayer} のターン`;
@@ -53,7 +65,16 @@ export function StatusDisplay({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <div className={getStatusClassName()}>{getStatusMessage()}</div>
+      <div
+        className={`${getStatusClassName()} ${isAITurn ? "animate-pulse" : ""}`}
+      >
+        {getStatusMessage()}
+        {isAITurn && (
+          <span className="ml-2 inline-block">
+            <span className="animate-bounce">🤖</span>
+          </span>
+        )}
+      </div>
 
       {showMoveCount && (
         <div className="text-sm text-gray-600 dark:text-gray-400 text-center">

@@ -2,14 +2,15 @@
  * ゲーム状態管理フック
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type {
   GameState,
   BoardPosition,
   Player,
   GameConfig,
-} from "../types/game";
+} from "../types/common/game";
 import { createInitialGameState, updateGameState } from "../lib/gameLogic";
+import { getAIMove } from "../lib/aiPlayer";
 
 export interface UseGameReturn {
   gameState: GameState;
@@ -17,6 +18,9 @@ export interface UseGameReturn {
   resetGame: (startingPlayer?: Player) => void;
   isGameFinished: boolean;
   canMakeMove: (position: BoardPosition) => boolean;
+  gameMode: "pvp" | "pvc";
+  setGameMode: (mode: "pvp" | "pvc") => void;
+  isAITurn: boolean;
 }
 
 /**
@@ -33,20 +37,65 @@ export function useGame(config?: Partial<GameConfig>): UseGameReturn {
     createInitialGameState(initialPlayer)
   );
 
-  /**
-   * 手を打つ
-   */
-  const makeMove = useCallback((position: BoardPosition) => {
-    setGameState(prevState => {
-      // ゲームが終了している場合は何もしない
-      if (prevState.gameStatus !== "playing") {
-        return prevState;
-      }
+  // ゲームモードの管理（デフォルトは人vs人）
+  const [gameMode, setGameMode] = useState<"pvp" | "pvc">(
+    config?.mode || "pvp"
+  );
 
-      // 新しいゲーム状態を計算
-      return updateGameState(prevState, position);
-    });
-  }, []);
+  // AIが O プレイヤーかどうか（PvCモードでは人間がX、AIがO）
+  const aiPlayer: Player = "O";
+
+  // 現在がAIのターンかどうか
+  const isAITurn =
+    gameMode === "pvc" &&
+    gameState.currentPlayer === aiPlayer &&
+    gameState.gameStatus === "playing";
+
+  /**
+   * AIの手を自動実行
+   */
+  useEffect(() => {
+    if (isAITurn) {
+      const timer = setTimeout(() => {
+        try {
+          const aiMove = getAIMove(
+            gameState.board,
+            aiPlayer,
+            config?.aiDifficulty
+          );
+          setGameState(prevState => updateGameState(prevState, aiMove));
+        } catch (error) {
+          console.error("AI move failed:", error);
+        }
+      }, 500); // 0.5秒待ってからAIが手を打つ
+
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAITurn]);
+
+  /**
+   * 手を打つ（人間プレイヤー用）
+   */
+  const makeMove = useCallback(
+    (position: BoardPosition) => {
+      setGameState(prevState => {
+        // ゲームが終了している場合は何もしない
+        if (prevState.gameStatus !== "playing") {
+          return prevState;
+        }
+
+        // PvCモードでAIのターンの場合は何もしない
+        if (gameMode === "pvc" && prevState.currentPlayer === aiPlayer) {
+          return prevState;
+        }
+
+        // 新しいゲーム状態を計算
+        return updateGameState(prevState, position);
+      });
+    },
+    [gameMode, aiPlayer]
+  );
 
   /**
    * ゲームをリセット
@@ -82,6 +131,9 @@ export function useGame(config?: Partial<GameConfig>): UseGameReturn {
     resetGame,
     isGameFinished,
     canMakeMove,
+    gameMode,
+    setGameMode,
+    isAITurn,
   };
 }
 

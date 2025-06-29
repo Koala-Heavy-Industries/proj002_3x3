@@ -8,7 +8,7 @@ import { Button } from "./Button";
 import { Cell } from "./Cell";
 import { StatusDisplay } from "./StatusDisplay";
 import type { GameBoardProps } from "../types/client/components";
-import type { BoardPosition } from "../types/game";
+import type { BoardPosition } from "../types/common/game";
 
 /**
  * ゲームボードコンポーネント
@@ -19,12 +19,19 @@ export function GameBoard({
   onMoveStart,
   onMoveComplete,
   disabled = false,
-  theme = "light",
   className = "",
   ariaLabel = "三目並べゲームボード",
 }: GameBoardProps) {
-  const { gameState, makeMove, resetGame, canMakeMove, isGameFinished } =
-    useGame(config);
+  const {
+    gameState,
+    makeMove,
+    resetGame,
+    canMakeMove,
+    isGameFinished,
+    gameMode,
+    setGameMode,
+    isAITurn,
+  } = useGame(config);
 
   // ゲーム終了時の処理（前の状態との比較で実行を制御）
   const [hasNotifiedGameEnd, setHasNotifiedGameEnd] = React.useState(false);
@@ -53,6 +60,37 @@ export function GameBoard({
 
   return (
     <div className="flex flex-col items-center space-y-6 p-4">
+      {/* ゲームモード切替 */}
+      <div className="flex items-center space-x-4 mb-4">
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          ゲームモード:
+        </span>
+        <div className="flex space-x-2">
+          <Button
+            variant={gameMode === "pvp" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => {
+              setGameMode("pvp");
+              resetGame(); // モード変更時にゲームをリセット
+            }}
+            disabled={disabled}
+          >
+            人 vs 人
+          </Button>
+          <Button
+            variant={gameMode === "pvc" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => {
+              setGameMode("pvc");
+              resetGame(); // モード変更時にゲームをリセット
+            }}
+            disabled={disabled}
+          >
+            人 vs コンピュータ
+          </Button>
+        </div>
+      </div>
+
       {/* ゲーム状態表示 */}
       <StatusDisplay
         currentPlayer={gameState.currentPlayer}
@@ -61,6 +99,8 @@ export function GameBoard({
         showMoveCount
         moveCount={gameState.moves.length}
         className="mb-4"
+        isAITurn={isAITurn}
+        gameMode={gameMode}
       />
 
       {/* ゲームボード */}
@@ -108,6 +148,14 @@ export function GameBoard({
       {/* ゲーム情報 */}
       <div className="text-sm text-gray-600 dark:text-gray-400 text-center">
         <div>先攻: {config?.playerXStarts !== false ? "X" : "O"}</div>
+        {gameMode === "pvc" && (
+          <div className="mt-1">
+            あなた: X, コンピュータ: O
+            {isAITurn && (
+              <span className="ml-2 text-blue-500">（AI思考中...）</span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
