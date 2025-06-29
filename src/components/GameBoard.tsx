@@ -79,6 +79,33 @@ export function GameBoard({
         </div>
       </div>
 
+      {/* 先攻・後攻選択 */}
+      <div className="flex items-center space-x-4 mb-4">
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          先攻プレイヤー:
+        </span>
+        <div className="flex space-x-2">
+          <Button
+            variant={gameState.firstPlayer === "X" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => resetGame("X")}
+            disabled={disabled}
+            title="Xが先攻でゲーム開始"
+          >
+            X が先攻
+          </Button>
+          <Button
+            variant={gameState.firstPlayer === "O" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => resetGame("O")}
+            disabled={disabled}
+            title="Oが先攻でゲーム開始"
+          >
+            O が先攻
+          </Button>
+        </div>
+      </div>
+
       {/* ゲーム状態表示 */}
       <StatusDisplay
         currentPlayer={gameState.currentPlayer}

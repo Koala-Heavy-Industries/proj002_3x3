@@ -28,6 +28,7 @@ export interface GameState {
   gameStatus: GameStatus; // ゲーム状態
   winner: null | Player; // 勝者 (未決定の場合はnull)
   moves: Move[]; // 手順履歴
+  firstPlayer: Player; // 先攻プレイヤー
 }
 
 // ゲーム記録の型定義

@@ -191,6 +191,7 @@ export function updateGameState(
     gameStatus,
     winner: winner?.player || null,
     moves: newMoves,
+    firstPlayer: currentState.firstPlayer,
   };
 }
 
@@ -208,5 +209,6 @@ export function createInitialGameState(
     gameStatus: "playing",
     winner: null,
     moves: [],
+    firstPlayer: startingPlayer,
   };
 }
