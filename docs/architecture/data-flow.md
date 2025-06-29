@@ -4,6 +4,20 @@
 
 3x3三目並べアプリケーションにおける状態管理、データの流れ、イベント処理パターンを詳細に図示します。
 
+### 🔰 初心者向け：データフローとは？
+
+**データフロー**とは、アプリケーション内でデータがどのように流れ、変化していくかを示したものです。
+
+**読み方のポイント**：
+- **矢印の方向**: データの流れる方向
+- **ボックスの種類**: 処理の種類（ユーザーアクション、状態管理、UI更新等）
+- **色分け**: 役割別のグループ分け
+
+**実用的な活用方法**：
+- バグの原因調査：問題の発生箇所から逆方向にたどる
+- パフォーマンス最適化：ボトルネックの特定
+- 機能追加：新機能がどこに影響するかの把握
+
 ## 全体データフロー概観
 
 ```mermaid
@@ -415,8 +429,61 @@ const updateStats = (prev: GameStats, winner: GameResult) => ({
 const addMove = (moves: Move[], newMove: Move) => [...moves, newMove];
 ```
 
+## 📚 React初心者のための状態管理入門
+
+### Reactの状態管理の基本概念
+
+**1. useState とは？**
+```typescript
+const [gameState, setGameState] = useState(initialState);
+// gameState: 現在の状態値
+// setGameState: 状態を更新する関数
+```
+
+**2. 関数型更新とは？**
+```typescript
+setGameState(prevState => {
+  // prevState: 前の状態
+  // return: 新しい状態
+  return updateGameState(prevState, position);
+});
+```
+
+**3. useEffect とは？**
+```typescript
+useEffect(() => {
+  // 副作用処理（API呼び出し、タイマー等）
+}, [dependency]); // 依存配列が変化した時に実行
+```
+
+### このアプリでの実例
+
+**セルクリック時のデータフロー**：
+1. ユーザーがセルをクリック
+2. `handleCellClick` 関数が呼ばれる
+3. `makeMove` 関数で `setGameState` を実行
+4. `updateGameState` で新しい状態を計算
+5. React が自動でUIを再レンダリング
+
+**AI自動実行のデータフロー**：
+1. `isAITurn` 状態が `true` に変化
+2. `useEffect` が変化を検知
+3. 0.5秒後に `setTimeout` でAIが手を打つ
+4. 状態が更新されてUIに反映
+
+### デバッグ時の活用方法
+
+**問題**: セルをクリックしても反応しない
+
+**デバッグ手順**：
+1. データフロー図で流れを確認
+2. `handleCellClick` が呼ばれているかチェック
+3. `canMakeMove` の結果を確認
+4. `makeMove` が実行されているかチェック
+5. `setGameState` の引数を確認
+
 ---
 
 **最終更新**: 2025-06-29  
-**バージョン**: Phase 2完了版  
+**バージョン**: Phase 4完了版（初心者ガイド追加）  
 **作成者**: Claude Code
