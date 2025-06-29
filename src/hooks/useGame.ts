@@ -49,7 +49,6 @@ export function useGame(
 
   // ゲーム開始時刻の記録
   const gameStartTime = useRef<number>(Date.now());
-  
 
   // AIが O プレイヤーかどうか（PvCモードでは人間がX、AIがO）
   const aiPlayer: Player = "O";
@@ -175,7 +174,6 @@ export function useGame(
       handleGameEnd(gameState);
     }
   }, [isGameFinished]); // isGameFinishedが変わった時のみ実行
-
 
   return {
     gameState,

@@ -33,7 +33,7 @@ const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
 describe("LocalStorageRepository", () => {
   let repository: LocalStorageRepository;
-  
+
   const mockGameRecord: GameRecord = {
     id: "test-game-1",
     timestamp: 1640995200000, // 2022-01-01 00:00:00 UTC
@@ -71,7 +71,7 @@ describe("LocalStorageRepository", () => {
     it("既存ゲームを更新できる", async () => {
       // 最初に保存
       await repository.saveGame(mockGameRecord);
-      
+
       // 同じIDで更新
       const updatedGame = { ...mockGameRecord, duration: 45 };
       await repository.saveGame(updatedGame);
@@ -84,7 +84,7 @@ describe("LocalStorageRepository", () => {
     it("複数ゲームをタイムスタンプ順で保存する", async () => {
       const game1 = { ...mockGameRecord, id: "game1", timestamp: 1000 };
       const game2 = { ...mockGameRecord, id: "game2", timestamp: 2000 };
-      
+
       await repository.saveGame(game1);
       await repository.saveGame(game2);
 
@@ -157,7 +157,7 @@ describe("LocalStorageRepository", () => {
         { ...mockGameRecord, id: "game2" },
         { ...mockGameRecord, id: "game3" },
       ];
-      
+
       for (const game of games) {
         await repository.saveGame(game);
       }

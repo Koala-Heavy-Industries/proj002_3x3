@@ -4,4 +4,5 @@ export { useLocalStorage } from "./useLocalStorage";
 export { useGameHistory } from "./useGameHistory";
 export { useGameStats } from "./useGameStats";
 export { useKeyboardNavigation } from "./useKeyboardNavigation";
+export { useGameReplay } from "./useGameReplay";
 // export { default as useTheme } from './useTheme';

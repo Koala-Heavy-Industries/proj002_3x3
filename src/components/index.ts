@@ -4,5 +4,5 @@ export { Button } from "./Button";
 export { Cell } from "./Cell";
 export { StatusDisplay } from "./StatusDisplay";
 export { GameHistory } from "./GameHistory";
-// export { default as GameReplay } from './GameReplay';
+export { GameReplay } from "./GameReplay";
 // export { default as ThemeToggle } from './ThemeToggle';

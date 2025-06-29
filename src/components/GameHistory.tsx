@@ -21,13 +21,18 @@ export function GameHistory({
   showStats = true,
   onGameSelect,
 }: GameHistoryProps) {
-  const { games, stats, isLoading, error, deleteGame, clearAllGames } = useGameHistory();
-  
+  const { games, stats, isLoading, error, deleteGame, clearAllGames } =
+    useGameHistory();
+
   // ソート・フィルタ状態
-  const [sortBy, setSortBy] = useState<"timestamp" | "duration" | "result">("timestamp");
+  const [sortBy, setSortBy] = useState<"timestamp" | "duration" | "result">(
+    "timestamp"
+  );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [filterMode, setFilterMode] = useState<"all" | "pvp" | "pvc">("all");
-  const [filterResult, setFilterResult] = useState<"all" | "X" | "O" | "draw">("all");
+  const [filterResult, setFilterResult] = useState<"all" | "X" | "O" | "draw">(
+    "all"
+  );
 
   // フィルタ・ソート済みゲーム一覧
   const filteredAndSortedGames = useMemo(() => {
@@ -46,7 +51,7 @@ export function GameHistory({
     // ソート
     filtered.sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case "timestamp":
           comparison = a.timestamp - b.timestamp;
@@ -116,7 +121,9 @@ export function GameHistory({
 
   // 全削除確認
   const handleClearAll = async () => {
-    if (window.confirm("すべての棋譜を削除しますか？この操作は取り消せません。")) {
+    if (
+      window.confirm("すべての棋譜を削除しますか？この操作は取り消せません。")
+    ) {
       try {
         await clearAllGames();
       } catch (error) {
@@ -153,19 +160,27 @@ export function GameHistory({
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{stats.totalGames}</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {stats.totalGames}
+              </div>
               <div className="text-gray-600 dark:text-gray-400">総ゲーム数</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{stats.wins.X}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats.wins.X}
+              </div>
               <div className="text-gray-600 dark:text-gray-400">X の勝利</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{stats.wins.O}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {stats.wins.O}
+              </div>
               <div className="text-gray-600 dark:text-gray-400">O の勝利</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-600">{stats.draws}</div>
+              <div className="text-2xl font-bold text-gray-600">
+                {stats.draws}
+              </div>
               <div className="text-gray-600 dark:text-gray-400">引き分け</div>
             </div>
           </div>
@@ -183,7 +198,7 @@ export function GameHistory({
               </label>
               <select
                 value={`${sortBy}-${sortOrder}`}
-                onChange={(e) => {
+                onChange={e => {
                   const [by, order] = e.target.value.split("-");
                   setSortBy(by as typeof sortBy);
                   setSortOrder(order as typeof sortOrder);
@@ -204,7 +219,9 @@ export function GameHistory({
               </label>
               <select
                 value={filterMode}
-                onChange={(e) => setFilterMode(e.target.value as typeof filterMode)}
+                onChange={e =>
+                  setFilterMode(e.target.value as typeof filterMode)
+                }
                 className="text-sm border rounded px-2 py-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
               >
                 <option value="all">全て</option>
@@ -220,7 +237,9 @@ export function GameHistory({
               </label>
               <select
                 value={filterResult}
-                onChange={(e) => setFilterResult(e.target.value as typeof filterResult)}
+                onChange={e =>
+                  setFilterResult(e.target.value as typeof filterResult)
+                }
                 className="text-sm border rounded px-2 py-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
               >
                 <option value="all">全て</option>
@@ -249,7 +268,9 @@ export function GameHistory({
       {filteredAndSortedGames.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-gray-600 dark:text-gray-400 text-lg">
-            {games.length === 0 ? "まだ棋譜が保存されていません" : "条件に合う棋譜が見つかりません"}
+            {games.length === 0
+              ? "まだ棋譜が保存されていません"
+              : "条件に合う棋譜が見つかりません"}
           </div>
           {games.length === 0 && (
             <div className="text-gray-500 dark:text-gray-500 text-sm mt-2">
@@ -259,7 +280,7 @@ export function GameHistory({
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredAndSortedGames.map((game) => (
+          {filteredAndSortedGames.map(game => (
             <div
               key={game.id}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow"
@@ -282,14 +303,27 @@ export function GameHistory({
                     {formatDate(game.timestamp)} • {game.moves.length}手
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => handleDelete(game.id, e)}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900"
-                >
-                  削除
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={e => {
+                      e.stopPropagation();
+                      window.open(`/replay/${game.id}`, "_blank");
+                    }}
+                    title="棋譜を再生"
+                  >
+                    ▶ 再生
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={e => handleDelete(game.id, e)}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900"
+                  >
+                    削除
+                  </Button>
+                </div>
               </div>
             </div>
           ))}

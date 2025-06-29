@@ -35,7 +35,11 @@ export function useGameHistory(): UseGameHistoryReturn {
       const loadedGames = await gameRepository.loadGames();
       setGames(loadedGames);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ゲーム履歴の読み込みに失敗しました");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "ゲーム履歴の読み込みに失敗しました"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -44,30 +48,40 @@ export function useGameHistory(): UseGameHistoryReturn {
   /**
    * ゲームを保存
    */
-  const saveGame = useCallback(async (game: GameRecord) => {
-    try {
-      setError(null);
-      await gameRepository.saveGame(game);
-      await refreshGames(); // 保存後にリフレッシュ
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "ゲームの保存に失敗しました");
-      throw err;
-    }
-  }, [refreshGames]);
+  const saveGame = useCallback(
+    async (game: GameRecord) => {
+      try {
+        setError(null);
+        await gameRepository.saveGame(game);
+        await refreshGames(); // 保存後にリフレッシュ
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "ゲームの保存に失敗しました"
+        );
+        throw err;
+      }
+    },
+    [refreshGames]
+  );
 
   /**
    * ゲームを削除
    */
-  const deleteGame = useCallback(async (id: string) => {
-    try {
-      setError(null);
-      await gameRepository.deleteGame(id);
-      await refreshGames(); // 削除後にリフレッシュ
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "ゲームの削除に失敗しました");
-      throw err;
-    }
-  }, [refreshGames]);
+  const deleteGame = useCallback(
+    async (id: string) => {
+      try {
+        setError(null);
+        await gameRepository.deleteGame(id);
+        await refreshGames(); // 削除後にリフレッシュ
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "ゲームの削除に失敗しました"
+        );
+        throw err;
+      }
+    },
+    [refreshGames]
+  );
 
   /**
    * すべてのゲームを削除
@@ -78,7 +92,11 @@ export function useGameHistory(): UseGameHistoryReturn {
       await gameRepository.clearAll();
       await refreshGames(); // 削除後にリフレッシュ
     } catch (err) {
-      setError(err instanceof Error ? err.message : "すべてのゲームの削除に失敗しました");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "すべてのゲームの削除に失敗しました"
+      );
       throw err;
     }
   }, [refreshGames]);
@@ -93,15 +111,13 @@ export function useGameHistory(): UseGameHistoryReturn {
       O: games.filter(g => g.result === "O").length,
     },
     draws: games.filter(g => g.result === "draw").length,
-    averageDuration: games.length > 0 
-      ? games.reduce((sum, g) => sum + g.duration, 0) / games.length 
-      : 0,
-    longestGame: games.length > 0 
-      ? Math.max(...games.map(g => g.duration)) 
-      : 0,
-    shortestGame: games.length > 0 
-      ? Math.min(...games.map(g => g.duration)) 
-      : 0,
+    averageDuration:
+      games.length > 0
+        ? games.reduce((sum, g) => sum + g.duration, 0) / games.length
+        : 0,
+    longestGame: games.length > 0 ? Math.max(...games.map(g => g.duration)) : 0,
+    shortestGame:
+      games.length > 0 ? Math.min(...games.map(g => g.duration)) : 0,
   };
 
   // 初回読み込み

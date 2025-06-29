@@ -20,21 +20,25 @@ interface GameRepository {
 #### メソッド詳細
 
 **saveGame(game: GameRecord)**
+
 - 新しいゲーム記録をlocalStorageに保存
 - パラメータ: `GameRecord` オブジェクト
 - 戻り値: `Promise<void>`
 
 **loadGames()**
+
 - 保存されているすべてのゲーム記録を取得
 - パラメータ: なし
 - 戻り値: `Promise<GameRecord[]>`
 
 **deleteGame(id: string)**
+
 - 指定IDのゲーム記録を削除
 - パラメータ: ゲームID文字列
 - 戻り値: `Promise<void>`
 
 **clearAll()**
+
 - すべてのゲーム記録を削除
 - パラメータ: なし
 - 戻り値: `Promise<void>`
@@ -81,8 +85,8 @@ interface GameHistoryProps {
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "danger";
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   className?: string;
 }
@@ -92,7 +96,7 @@ interface ButtonProps {
 
 ```typescript
 interface CellProps {
-  value: 'X' | 'O' | null;
+  value: "X" | "O" | null;
   onClick: () => void;
   disabled?: boolean;
   position: number;
@@ -122,7 +126,7 @@ const {
   isGameFinished,
   gameMode,
   setGameMode,
-  isAITurn
+  isAITurn,
 } = useGame(config, onGameEnd);
 ```
 
@@ -145,6 +149,7 @@ const {
 #### 🐛 **バグ修正履歴**
 
 **2025-06-29 (ea0a0a3)**:
+
 - ✅ **無限ループ修正**: useEffectの依存配列最適化
 - ✅ **重複記録防止**: ゲーム終了処理の統一化
 - ✅ **型安全性向上**: processMove関数による共通処理
@@ -152,13 +157,8 @@ const {
 ### useGameHistory
 
 ```typescript
-const {
-  games,
-  saveGame,
-  deleteGame,
-  clearHistory,
-  isLoading
-} = useGameHistory();
+const { games, saveGame, deleteGame, clearHistory, isLoading } =
+  useGameHistory();
 ```
 
 #### 戻り値
@@ -189,12 +189,7 @@ const [value, setValue, removeValue] = useLocalStorage<T>(key, defaultValue);
 ### useGameStats
 
 ```typescript
-const {
-  stats,
-  updateStats,
-  resetStats,
-  totalGames
-} = useGameStats();
+const { stats, updateStats, resetStats, totalGames } = useGameStats();
 ```
 
 #### 戻り値
@@ -207,11 +202,8 @@ const {
 ### useKeyboardNavigation
 
 ```typescript
-const {
-  focusedPosition,
-  handleKeyDown,
-  resetFocus
-} = useKeyboardNavigation(gridSize);
+const { focusedPosition, handleKeyDown, resetFocus } =
+  useKeyboardNavigation(gridSize);
 ```
 
 #### パラメータ
@@ -229,7 +221,7 @@ const {
 ### aiPlayer 関数
 
 ```typescript
-function aiPlayer(board: Board): number
+function aiPlayer(board: Board): number;
 ```
 
 #### パラメータ
@@ -248,7 +240,7 @@ function aiPlayer(board: Board): number
 interface GameState {
   board: Board;
   currentPlayer: Player;
-  gameStatus: 'playing' | 'finished' | 'draw';
+  gameStatus: "playing" | "finished" | "draw";
   winner: Player | null;
   moves: Move[];
   startTime: number;
@@ -261,9 +253,9 @@ interface GameState {
 interface GameRecord {
   id: string;
   timestamp: number;
-  gameMode: 'pvp' | 'pvc';
+  gameMode: "pvp" | "pvc";
   moves: Move[];
-  result: 'X' | 'O' | 'draw';
+  result: "X" | "O" | "draw";
   duration: number;
 }
 ```
@@ -283,10 +275,10 @@ interface Move {
 ```typescript
 type GameResult = {
   winner: Player | null;
-  gameMode: 'pvp' | 'pvc';
+  gameMode: "pvp" | "pvc";
   moves: Move[];
   duration: number;
-}
+};
 ```
 
 ### GameStats
@@ -305,25 +297,25 @@ interface GameStats {
 ### checkWinner
 
 ```typescript
-function checkWinner(board: Board): Player | null
+function checkWinner(board: Board): Player | null;
 ```
 
 ### isDraw
 
 ```typescript
-function isDraw(board: Board): boolean
+function isDraw(board: Board): boolean;
 ```
 
 ### getEmptyPositions
 
 ```typescript
-function getEmptyPositions(board: Board): number[]
+function getEmptyPositions(board: Board): number[];
 ```
 
 ### makeMove
 
 ```typescript
-function makeMove(board: Board, position: number, player: Player): Board
+function makeMove(board: Board, position: number, player: Player): Board;
 ```
 
 ---
@@ -337,13 +329,13 @@ import { useGame } from '@/hooks/useGame';
 
 function GameComponent() {
   const { gameState, makeMove, resetGame } = useGame();
-  
+
   const handleCellClick = (position: number) => {
     if (gameState.gameStatus === 'playing') {
       makeMove(position);
     }
   };
-  
+
   return (
     <div>
       {/* ゲームボード実装 */}
@@ -359,9 +351,9 @@ import { useGameHistory } from '@/hooks/useGameHistory';
 
 function HistoryComponent() {
   const { games, deleteGame } = useGameHistory();
-  
+
   return (
-    <GameHistory 
+    <GameHistory
       games={games}
       onDeleteGame={deleteGame}
     />

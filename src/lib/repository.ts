@@ -17,7 +17,7 @@ export class LocalStorageRepository implements GameRepository {
   async saveGame(game: GameRecord): Promise<void> {
     try {
       const games = await this.loadGames();
-      
+
       // 既存のゲームがあれば更新、なければ新規追加
       const existingIndex = games.findIndex(g => g.id === game.id);
       if (existingIndex >= 0) {
@@ -47,7 +47,7 @@ export class LocalStorageRepository implements GameRepository {
       }
 
       const games = JSON.parse(data) as GameRecord[];
-      
+
       // データの妥当性チェック
       return games.filter(this.isValidGameRecord);
     } catch (error) {
@@ -63,7 +63,7 @@ export class LocalStorageRepository implements GameRepository {
     try {
       const games = await this.loadGames();
       const filteredGames = games.filter(game => game.id !== id);
-      
+
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredGames));
     } catch (error) {
       console.error("Failed to delete game:", error);

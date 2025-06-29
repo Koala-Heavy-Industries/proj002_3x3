@@ -92,7 +92,9 @@ describe("useGameHistory", () => {
 
     it("読み込みエラー時はエラー状態を設定する", async () => {
       const errorMessage = "Network error";
-      mockGameRepository.loadGames.mockRejectedValueOnce(new Error(errorMessage));
+      mockGameRepository.loadGames.mockRejectedValueOnce(
+        new Error(errorMessage)
+      );
 
       const { result } = renderHook(() => useGameHistory());
 
@@ -115,7 +117,7 @@ describe("useGameHistory", () => {
       });
 
       const { stats } = result.current;
-      
+
       expect(stats.totalGames).toBe(3);
       expect(stats.wins.X).toBe(1);
       expect(stats.wins.O).toBe(1);
@@ -127,7 +129,7 @@ describe("useGameHistory", () => {
 
     it("ゲームが0件の場合の統計を計算する", async () => {
       mockGameRepository.loadGames.mockResolvedValueOnce([]);
-      
+
       const { result } = renderHook(() => useGameHistory());
 
       await act(async () => {
@@ -135,7 +137,7 @@ describe("useGameHistory", () => {
       });
 
       const { stats } = result.current;
-      
+
       expect(stats.totalGames).toBe(0);
       expect(stats.wins.X).toBe(0);
       expect(stats.wins.O).toBe(0);
@@ -167,7 +169,10 @@ describe("useGameHistory", () => {
 
       // saveGame のモック設定
       mockGameRepository.saveGame.mockResolvedValueOnce(undefined);
-      mockGameRepository.loadGames.mockResolvedValueOnce([newGame, ...mockGames]);
+      mockGameRepository.loadGames.mockResolvedValueOnce([
+        newGame,
+        ...mockGames,
+      ]);
 
       await act(async () => {
         await result.current.saveGame(newGame);
@@ -186,7 +191,9 @@ describe("useGameHistory", () => {
       });
 
       const errorMessage = "Save failed";
-      mockGameRepository.saveGame.mockRejectedValueOnce(new Error(errorMessage));
+      mockGameRepository.saveGame.mockRejectedValueOnce(
+        new Error(errorMessage)
+      );
 
       const newGame: GameRecord = {
         id: "new-game",
@@ -199,7 +206,9 @@ describe("useGameHistory", () => {
       };
 
       await act(async () => {
-        await expect(result.current.saveGame(newGame)).rejects.toThrow(errorMessage);
+        await expect(result.current.saveGame(newGame)).rejects.toThrow(
+          errorMessage
+        );
       });
 
       expect(result.current.error).toBe(errorMessage);
@@ -236,10 +245,14 @@ describe("useGameHistory", () => {
       });
 
       const errorMessage = "Delete failed";
-      mockGameRepository.deleteGame.mockRejectedValueOnce(new Error(errorMessage));
+      mockGameRepository.deleteGame.mockRejectedValueOnce(
+        new Error(errorMessage)
+      );
 
       await act(async () => {
-        await expect(result.current.deleteGame("game1")).rejects.toThrow(errorMessage);
+        await expect(result.current.deleteGame("game1")).rejects.toThrow(
+          errorMessage
+        );
       });
 
       expect(result.current.error).toBe(errorMessage);
@@ -275,10 +288,14 @@ describe("useGameHistory", () => {
       });
 
       const errorMessage = "Clear all failed";
-      mockGameRepository.clearAll.mockRejectedValueOnce(new Error(errorMessage));
+      mockGameRepository.clearAll.mockRejectedValueOnce(
+        new Error(errorMessage)
+      );
 
       await act(async () => {
-        await expect(result.current.clearAllGames()).rejects.toThrow(errorMessage);
+        await expect(result.current.clearAllGames()).rejects.toThrow(
+          errorMessage
+        );
       });
 
       expect(result.current.error).toBe(errorMessage);
@@ -295,15 +312,18 @@ describe("useGameHistory", () => {
       });
 
       // 新しいデータでモック更新
-      const newMockGames = [...mockGames, {
-        id: "refresh-game",
-        timestamp: Date.now(),
-        gameMode: "pvp" as const,
-        moves: [],
-        result: "X" as const,
-        duration: 15,
-        playerXStarts: true,
-      }];
+      const newMockGames = [
+        ...mockGames,
+        {
+          id: "refresh-game",
+          timestamp: Date.now(),
+          gameMode: "pvp" as const,
+          moves: [],
+          result: "X" as const,
+          duration: 15,
+          playerXStarts: true,
+        },
+      ];
       mockGameRepository.loadGames.mockResolvedValueOnce(newMockGames);
 
       await act(async () => {

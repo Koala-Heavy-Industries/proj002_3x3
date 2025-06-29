@@ -356,12 +356,13 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
 ### 2025-06-29: ゲーム終了時の重要バグ修正 (Issue #17)
 
 #### 🔴 **修正されたバグ**
+
 1. **ゲーム終了時フリーズ**
    - **症状**: 勝利・引き分け時にアプリケーションがフリーズ
    - **原因**: useEffectの無限ループ (`gameState`依存配列問題)
    - **解決**: 状態更新と副作用処理の分離
 
-2. **重複記録バグ** 
+2. **重複記録バグ**
    - **症状**: 1ゲームで2つの記録が作成される
    - **原因**: ゲーム終了処理が2か所で実行
    - **解決**: 単一のuseEffectによる統一処理
@@ -371,12 +372,14 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
    - **解決**: null合体演算子による型安全性確保
 
 #### ✅ **修正内容**
+
 - **ファイル**: `src/hooks/useGame.ts`, `src/components/GameBoard.tsx`
 - **コミット**: `ea0a0a3` - fix: resolve game-ending freeze and duplicate record bugs
 - **Issue**: #17 (自動クローズ済み)
 - **テスト**: 113テストケース全PASS維持
 
 #### 🏗️ **アーキテクチャ改善**
+
 - useEffectの適切な依存配列管理
 - 状態更新とコールバック処理の明確な分離
 - processMove関数による共通処理の統一

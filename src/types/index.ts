@@ -8,6 +8,9 @@ export * from "./common";
 // クライアント専用型定義
 export * from "./client";
 
+// 再生機能型定義
+export * from "./replay";
+
 // 後方互換性のため既存のgame.tsから個別エクスポート（重複回避）
 export type {
   CellClickHandler as LegacyCellClickHandler,
