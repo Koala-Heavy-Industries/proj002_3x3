@@ -119,17 +119,35 @@ const {
   makeMove,
   resetGame,
   canMakeMove,
-  isGameFinished
-} = useGame();
+  isGameFinished,
+  gameMode,
+  setGameMode,
+  isAITurn
+} = useGame(config, onGameEnd);
 ```
+
+#### パラメータ
+
+- **config**: `GameConfig` - ゲーム設定（オプション）
+- **onGameEnd**: `(gameRecord: GameRecord) => void` - ゲーム終了時コールバック（オプション）
 
 #### 戻り値
 
 - **gameState**: `GameState` - 現在のゲーム状態
-- **makeMove**: `(position: number) => boolean` - 手を打つ関数
-- **resetGame**: `() => void` - ゲームリセット関数
-- **canMakeMove**: `(position: number) => boolean` - 手が打てるかチェック
-- **isGameFinished**: `() => boolean` - ゲーム終了判定
+- **makeMove**: `(position: BoardPosition) => void` - 手を打つ関数
+- **resetGame**: `(startingPlayer?: Player) => void` - ゲームリセット関数
+- **canMakeMove**: `(position: BoardPosition) => boolean` - 手が打てるかチェック
+- **isGameFinished**: `boolean` - ゲーム終了判定
+- **gameMode**: `GameMode` - 現在のゲームモード
+- **setGameMode**: `(mode: GameMode) => void` - ゲームモード変更
+- **isAITurn**: `boolean` - AIのターンかどうか
+
+#### 🐛 **バグ修正履歴**
+
+**2025-06-29 (ea0a0a3)**:
+- ✅ **無限ループ修正**: useEffectの依存配列最適化
+- ✅ **重複記録防止**: ゲーム終了処理の統一化
+- ✅ **型安全性向上**: processMove関数による共通処理
 
 ### useGameHistory
 
