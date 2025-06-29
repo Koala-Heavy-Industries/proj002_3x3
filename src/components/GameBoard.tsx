@@ -103,7 +103,7 @@ export function GameBoard({
             <Cell
               key={position}
               position={position}
-              content={gameState.board[position]}
+              content={gameState.board[position] ?? null}
               onClick={handleCellClick}
               disabled={disabled || !canMakeMove(position)}
               ariaLabel={`セル ${position + 1}`}

@@ -49,6 +49,7 @@ export function useGame(
 
   // ゲーム開始時刻の記録
   const gameStartTime = useRef<number>(Date.now());
+  
 
   // AIが O プレイヤーかどうか（PvCモードでは人間がX、AIがO）
   const aiPlayer: Player = "O";
@@ -58,6 +59,38 @@ export function useGame(
     gameMode === "pvc" &&
     gameState.currentPlayer === aiPlayer &&
     gameState.gameStatus === "playing";
+
+  /**
+   * 手を打って新しい状態を作成（共通処理）
+   */
+  const processMove = useCallback(
+    (prevState: GameState, position: BoardPosition) => {
+      const newState = updateGameState(prevState, position);
+      return newState;
+    },
+    []
+  );
+
+  /**
+   * ゲーム終了時のコールバック実行
+   */
+  const handleGameEnd = useCallback(
+    (finalGameState: GameState) => {
+      if (onGameEnd && finalGameState.gameStatus !== "playing") {
+        const gameRecord: GameRecord = {
+          id: `game-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+          timestamp: gameStartTime.current,
+          gameMode,
+          moves: finalGameState.moves,
+          result: finalGameState.winner || "draw",
+          duration: Math.floor((Date.now() - gameStartTime.current) / 1000),
+          playerXStarts: initialPlayer === "X",
+        };
+        onGameEnd(gameRecord);
+      }
+    },
+    [onGameEnd, gameMode, initialPlayer]
+  );
 
   /**
    * AIの手を自動実行
@@ -71,7 +104,7 @@ export function useGame(
             aiPlayer,
             config?.aiDifficulty
           );
-          setGameState(prevState => updateGameState(prevState, aiMove));
+          setGameState(prevState => processMove(prevState, aiMove));
         } catch (error) {
           console.error("AI move failed:", error);
         }
@@ -80,7 +113,7 @@ export function useGame(
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAITurn]);
+  }, [isAITurn, handleGameEnd]);
 
   /**
    * 手を打つ（人間プレイヤー用）
@@ -99,31 +132,10 @@ export function useGame(
         }
 
         // 新しいゲーム状態を計算
-        return updateGameState(prevState, position);
+        return processMove(prevState, position);
       });
     },
-    [gameMode, aiPlayer]
-  );
-
-  /**
-   * ゲーム終了時のコールバック実行
-   */
-  const handleGameEnd = useCallback(
-    (finalGameState: GameState) => {
-      if (onGameEnd && finalGameState.gameStatus !== "playing") {
-        const gameRecord: GameRecord = {
-          id: `game-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          timestamp: gameStartTime.current,
-          gameMode,
-          moves: finalGameState.moves,
-          result: finalGameState.winner || "draw",
-          duration: Math.floor((Date.now() - gameStartTime.current) / 1000),
-          playerXStarts: initialPlayer === "X",
-        };
-        onGameEnd(gameRecord);
-      }
-    },
-    [onGameEnd, gameMode, initialPlayer]
+    [gameMode, aiPlayer, processMove]
   );
 
   /**
@@ -155,12 +167,15 @@ export function useGame(
    */
   const isGameFinished = gameState.gameStatus !== "playing";
 
-  // ゲーム終了時の処理
+  /**
+   * ゲーム終了を監視（状態変化後に一度だけ実行）
+   */
   useEffect(() => {
     if (isGameFinished) {
       handleGameEnd(gameState);
     }
-  }, [isGameFinished, handleGameEnd, gameState]);
+  }, [isGameFinished]); // isGameFinishedが変わった時のみ実行
+
 
   return {
     gameState,
