@@ -22,13 +22,19 @@ export function GameBoard({ config, onGameEnd }: GameBoardProps) {
   const { gameState, makeMove, resetGame, canMakeMove, isGameFinished } =
     useGame(config);
 
-  // ゲーム終了時の処理
+  // ゲーム終了時の処理（前の状態との比較で実行を制御）
+  const [hasNotifiedGameEnd, setHasNotifiedGameEnd] = React.useState(false);
+
   React.useEffect(() => {
-    if (isGameFinished && onGameEnd) {
+    if (isGameFinished && onGameEnd && !hasNotifiedGameEnd) {
       const result = gameState.winner || "draw";
       onGameEnd(result);
+      setHasNotifiedGameEnd(true);
+    } else if (!isGameFinished && hasNotifiedGameEnd) {
+      // ゲームがリセットされたら通知フラグもリセット
+      setHasNotifiedGameEnd(false);
     }
-  }, [isGameFinished, gameState.winner, onGameEnd]);
+  }, [isGameFinished, gameState.winner, onGameEnd, hasNotifiedGameEnd]);
 
   /**
    * セルクリックハンドラ
