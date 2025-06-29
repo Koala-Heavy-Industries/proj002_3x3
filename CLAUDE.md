@@ -352,3 +352,128 @@ const GameReplay: React.FC<{ game: GameRecord }> = ({ game }) => {
 - XSS対策 (React標準で対応)
 - データ検証 (型システムで対応)
 - localStorage容量制限対応
+
+## 📚 React/Next.js ベストプラクティス
+
+### 技術改善指針
+
+Phase 2完了を受けて、`../texts/react_memo.md` の知見を活用した技術改善を推進します。
+
+#### 🎯 型定義構造の改善
+
+**現状**: 基本的な型定義（`src/types/game.ts`）
+**改善案**: react_memo.mdの構造を参考に拡張
+
+```
+src/types/
+├── common/           # クライアント・サーバー共通型
+│   ├── game.ts      # ゲーム関連型（既存移動）
+│   └── api.ts       # API型定義（Phase 3準備）
+├── client/          # クライアント専用型
+│   ├── components/  # コンポーネントprops型
+│   ├── hooks/       # カスタムフック型
+│   └── store/       # 状態管理型
+└── server/          # サーバー専用型（将来）
+    ├── api/         # API実装型
+    └── db/          # データベース型
+```
+
+#### 🧩 コンポーネント設計強化
+
+**props型の明示化**:
+```typescript
+// 詳細なGameBoardProps定義
+interface GameBoardProps {
+  config?: Partial<GameConfig>;
+  onGameEnd?: (result: GameResult) => void;
+  onMoveStart?: (position: BoardPosition) => void;
+  onMoveComplete?: (move: Move) => void;
+  disabled?: boolean;
+  theme?: "light" | "dark";
+}
+```
+
+**再利用可能コンポーネント分離**:
+- `Button`: 共通ボタンコンポーネント
+- `Cell`: ゲームセル専用コンポーネント
+- `StatusDisplay`: 状態表示コンポーネント
+
+#### 🎣 カスタムフック拡張
+
+**Phase 3準備のフック**:
+```typescript
+// 統計データ管理
+const useLocalStorage = <T>(key: string, defaultValue: T) => { ... };
+
+// 棋譜履歴管理
+const useGameHistory = () => { ... };
+
+// アクセシビリティ強化
+const useKeyboardNavigation = (gridSize: number) => { ... };
+```
+
+#### ⚡ 開発ワークフロー改善
+
+**TypeScript厳密化**:
+```json
+// tsconfig.json強化案
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true
+  }
+}
+```
+
+**パフォーマンス分析**:
+- Bundle Analyzer導入
+- Core Web Vitals測定
+- レンダリング最適化
+
+#### 🚀 Phase 3拡張準備
+
+**API Routes構造**（react_memo.md参考）:
+```
+src/app/api/
+├── games/route.ts      # ゲーム一覧・作成
+├── games/[id]/route.ts # 個別ゲーム操作
+├── stats/route.ts      # 統計データ
+└── health/route.ts     # ヘルスチェック
+```
+
+**レイアウト拡張**:
+```
+src/app/
+├── history/           # 棋譜履歴機能
+│   ├── layout.tsx     # 履歴専用レイアウト
+│   └── page.tsx       # 履歴一覧
+└── replay/            # 棋譜再生機能
+    └── [id]/page.tsx  # 個別再生
+```
+
+#### 📋 実装優先順位
+
+**高優先度**（Phase 3前）:
+1. カスタムフック分離（useLocalStorage、useGameHistory）
+2. コンポーネントprops型強化
+3. 再利用可能コンポーネント分離
+
+**中優先度**（Phase 3並行）:
+1. API Routes構造準備
+2. レイアウト構造拡張
+3. 型定義構造改善
+
+**低優先度**（Phase 4以降）:
+1. middleware活用
+2. Bundle最適化
+3. 厳密型チェック
+
+### 参考資料の活用
+
+**`../texts/` フォルダ活用**:
+- `react_memo.md`: React/Next.js技術ノート
+- `gitmemo.txt`: Git操作リファレンス
+- `prompt1.txt`: ドキュメント管理システム設計
+
+これらの知見を継続的にプロジェクトに反映し、技術的負債の蓄積を防止します。
