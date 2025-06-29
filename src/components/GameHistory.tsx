@@ -34,6 +34,10 @@ export function GameHistory({
     "all"
   );
 
+  // 複数選択機能
+  const [selectedGames, setSelectedGames] = useState<Set<string>>(new Set());
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+
   // フィルタ・ソート済みゲーム一覧
   const filteredAndSortedGames = useMemo(() => {
     let filtered = games;
@@ -107,14 +111,71 @@ export function GameHistory({
     return mode === "pvp" ? "人 vs 人" : "人 vs コンピュータ";
   };
 
-  // 削除確認
+  // 削除確認（改善版）
   const handleDelete = async (id: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    if (window.confirm("この棋譜を削除しますか？")) {
+
+    // 削除対象のゲーム情報を取得
+    const gameToDelete = games.find(game => game.id === id);
+    const gameInfo = gameToDelete
+      ? `${formatResult(gameToDelete.result)} (${new Date(gameToDelete.timestamp).toLocaleDateString("ja-JP")})`
+      : "選択された棋譜";
+
+    const confirmed = window.confirm(
+      `${gameInfo}を削除してもよろしいですか？\n\nこの操作は取り消せません。`
+    );
+
+    if (confirmed) {
       try {
         await deleteGame(id);
+        // 成功時の視覚的フィードバック（オプション）
+        console.log("棋譜が正常に削除されました");
       } catch (error) {
         console.error("削除に失敗しました:", error);
+        alert("削除に失敗しました。もう一度お試しください。");
+      }
+    }
+  };
+
+  // 複数選択関連のハンドラー
+  const toggleGameSelection = (gameId: string) => {
+    setSelectedGames(prev => {
+      const newSelection = new Set(prev);
+      if (newSelection.has(gameId)) {
+        newSelection.delete(gameId);
+      } else {
+        newSelection.add(gameId);
+      }
+      return newSelection;
+    });
+  };
+
+  const selectAllGames = () => {
+    setSelectedGames(new Set(filteredAndSortedGames.map(game => game.id)));
+  };
+
+  const deselectAllGames = () => {
+    setSelectedGames(new Set());
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedGames.size === 0) return;
+
+    const confirmed = window.confirm(
+      `選択された${selectedGames.size}件の棋譜を削除してもよろしいですか？\n\nこの操作は取り消せません。`
+    );
+
+    if (confirmed) {
+      try {
+        // 選択されたゲームを順次削除
+        for (const gameId of selectedGames) {
+          await deleteGame(gameId);
+        }
+        setSelectedGames(new Set());
+        setIsSelectionMode(false);
+      } catch (error) {
+        console.error("一括削除に失敗しました:", error);
+        alert("一括削除に失敗しました。もう一度お試しください。");
       }
     }
   };
@@ -249,16 +310,68 @@ export function GameHistory({
               </select>
             </div>
 
-            {/* 全削除ボタン */}
-            <div className="ml-auto">
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={handleClearAll}
-                disabled={games.length === 0}
-              >
-                全削除
-              </Button>
+            {/* 選択・削除コントロール */}
+            <div className="ml-auto flex items-center space-x-2">
+              {!isSelectionMode ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsSelectionMode(true)}
+                    disabled={games.length === 0}
+                  >
+                    📋 複数選択
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={handleClearAll}
+                    disabled={games.length === 0}
+                  >
+                    🗑️ 全削除
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {selectedGames.size}件選択中
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={selectAllGames}
+                    disabled={filteredAndSortedGames.length === 0}
+                  >
+                    全選択
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={deselectAllGames}
+                    disabled={selectedGames.size === 0}
+                  >
+                    選択解除
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={handleBulkDelete}
+                    disabled={selectedGames.size === 0}
+                  >
+                    🗑️ 選択削除 ({selectedGames.size})
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setIsSelectionMode(false);
+                      setSelectedGames(new Set());
+                    }}
+                  >
+                    キャンセル
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -287,6 +400,19 @@ export function GameHistory({
               onClick={() => onGameSelect?.(game)}
             >
               <div className="flex items-center justify-between">
+                {/* 選択モード時のチェックボックス */}
+                {isSelectionMode && (
+                  <div className="mr-3 flex-shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={selectedGames.has(game.id)}
+                      onChange={() => toggleGameSelection(game.id)}
+                      onClick={e => e.stopPropagation()}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                  </div>
+                )}
+
                 <div className="flex-1">
                   <div className="flex items-center space-x-4 mb-2">
                     <span className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -315,14 +441,17 @@ export function GameHistory({
                   >
                     ▶ 再生
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={e => handleDelete(game.id, e)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900"
-                  >
-                    削除
-                  </Button>
+                  {!isSelectionMode && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={e => handleDelete(game.id, e)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900"
+                      title={`${formatResult(game.result)}の棋譜を削除`}
+                    >
+                      🗑️ 削除
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
