@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { GameBoard } from "../components/GameBoard";
 import { useGameHistory } from "../hooks/useGameHistory";
 import type { GameResult, GameRecord } from "../types/game";
@@ -100,12 +101,19 @@ export default function Home() {
                   </span>
                 </div>
                 {stats.totalGames > 0 && (
-                  <button
-                    onClick={resetStats}
-                    className="mt-4 w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 text-sm"
-                  >
-                    統計をリセット
-                  </button>
+                  <div className="mt-4 space-y-2">
+                    <Link href="/history" className="block">
+                      <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm">
+                        棋譜履歴を見る
+                      </button>
+                    </Link>
+                    <button
+                      onClick={resetStats}
+                      className="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 text-sm"
+                    >
+                      統計をリセット
+                    </button>
+                  </div>
                 )}
               </div>
             )}
