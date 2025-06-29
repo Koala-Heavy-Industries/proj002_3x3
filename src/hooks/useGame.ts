@@ -173,7 +173,9 @@ export function useGame(
     if (isGameFinished) {
       handleGameEnd(gameState);
     }
-  }, [isGameFinished]); // isGameFinishedが変わった時のみ実行
+    // 意図的にisGameFinishedの変化時のみ実行
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGameFinished]);
 
   return {
     gameState,

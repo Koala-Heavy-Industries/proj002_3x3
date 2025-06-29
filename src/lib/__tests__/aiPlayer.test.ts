@@ -3,7 +3,7 @@
  */
 
 import { AIPlayer, getAIMove, defaultAIPlayer } from "../aiPlayer";
-import type { BoardCell, BoardPosition, Player } from "../../types/common/game";
+import type { BoardCell, BoardPosition } from "../../types/common/game";
 
 describe("AIPlayer", () => {
   let aiPlayer: AIPlayer;
@@ -38,7 +38,7 @@ describe("AIPlayer", () => {
         null,
       ];
 
-      const move = aiPlayer.getNextMove(board, "O");
+      const move = aiPlayer.getNextMove(board);
       expect(move).toBeGreaterThanOrEqual(0);
       expect(move).toBeLessThanOrEqual(8);
       expect(Number.isInteger(move)).toBe(true);
@@ -57,7 +57,7 @@ describe("AIPlayer", () => {
         null,
       ];
 
-      const move = aiPlayer.getNextMove(board, "O");
+      const move = aiPlayer.getNextMove(board);
       const availablePositions = [2, 3, 5, 7, 8];
       expect(availablePositions).toContain(move);
     });
@@ -65,7 +65,7 @@ describe("AIPlayer", () => {
     it("should choose the last available cell when only one is left", () => {
       const board: BoardCell[] = ["X", "O", "X", "O", "X", "O", "X", "O", null];
 
-      const move = aiPlayer.getNextMove(board, "O");
+      const move = aiPlayer.getNextMove(board);
       expect(move).toBe(8);
     });
 
@@ -73,7 +73,7 @@ describe("AIPlayer", () => {
       const board: BoardCell[] = ["X", "O", "X", "O", "X", "O", "X", "O", "X"];
 
       expect(() => {
-        aiPlayer.getNextMove(board, "O");
+        aiPlayer.getNextMove(board);
       }).toThrow("No available moves on the board");
     });
 
@@ -90,8 +90,8 @@ describe("AIPlayer", () => {
         null,
       ];
 
-      const moveX = aiPlayer.getNextMove(board, "X");
-      const moveO = aiPlayer.getNextMove(board, "O");
+      const moveX = aiPlayer.getNextMove(board);
+      const moveO = aiPlayer.getNextMove(board);
 
       expect(moveX).toBeGreaterThanOrEqual(0);
       expect(moveX).toBeLessThanOrEqual(8);
@@ -130,7 +130,7 @@ describe("AIPlayer", () => {
 
       // 10回試行して複数の異なる手を選ぶかテスト
       for (let i = 0; i < 10; i++) {
-        const move = aiPlayer.getNextMove(board, "O");
+        const move = aiPlayer.getNextMove(board);
         moves.add(move);
       }
 
@@ -150,9 +150,9 @@ describe("AIPlayer", () => {
         ["X", "O", null, "O", "X", "O", "X", "O", null],
       ];
 
-      boards.forEach((board, index) => {
+      boards.forEach(board => {
         expect(() => {
-          const move = aiPlayer.getNextMove(board, "O");
+          const move = aiPlayer.getNextMove(board);
           expect(board[move]).toBeNull();
         }).not.toThrow();
       });
@@ -224,7 +224,7 @@ describe("defaultAIPlayer", () => {
       null,
     ];
 
-    const move = defaultAIPlayer.getNextMove(board, "O");
+    const move = defaultAIPlayer.getNextMove(board);
     expect(move).toBeGreaterThanOrEqual(0);
     expect(move).toBeLessThanOrEqual(8);
   });

@@ -13,7 +13,7 @@ export interface ApiResponse<T = unknown> {
 }
 
 // ゲーム一覧取得レスポンス
-export interface GetGamesResponse extends ApiResponse<GameRecord[]> {}
+export type GetGamesResponse = ApiResponse<GameRecord[]>;
 
 // ゲーム作成リクエスト
 export interface CreateGameRequest {
@@ -23,18 +23,17 @@ export interface CreateGameRequest {
 }
 
 // ゲーム作成レスポンス
-export interface CreateGameResponse extends ApiResponse<GameRecord> {}
+export type CreateGameResponse = ApiResponse<GameRecord>;
 
 // 統計取得レスポンス
-export interface GetStatsResponse extends ApiResponse<GameStats> {}
+export type GetStatsResponse = ApiResponse<GameStats>;
 
 // ヘルスチェックレスポンス
-export interface HealthCheckResponse
-  extends ApiResponse<{
-    status: "healthy" | "degraded" | "unhealthy";
-    uptime: number;
-    version: string;
-  }> {}
+export type HealthCheckResponse = ApiResponse<{
+  status: "healthy" | "degraded" | "unhealthy";
+  uptime: number;
+  version: string;
+}>;
 
 // エラーレスポンス型
 export interface ApiError {

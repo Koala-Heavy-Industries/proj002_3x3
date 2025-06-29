@@ -14,7 +14,7 @@ import {
   updateGameState,
   createInitialGameState,
 } from "../gameLogic";
-import type { BoardCell, Player, GameState } from "../../types/game";
+import type { BoardCell, BoardPosition } from "../../types/game";
 
 describe("gameLogic", () => {
   describe("initializeBoard", () => {
@@ -51,7 +51,7 @@ describe("gameLogic", () => {
     it("should handle all valid positions", () => {
       const board = initializeBoard();
       for (let i = 0; i < 9; i++) {
-        expect(isValidMove(board, i as any)).toBe(true);
+        expect(isValidMove(board, i as BoardPosition)).toBe(true);
       }
     });
   });
@@ -489,7 +489,7 @@ describe("gameLogic", () => {
 
     it("should play a complete game ending in draw", () => {
       // Test updateGameState with a board that results in draw after final move
-      let gameState = createInitialGameState("X");
+      const gameState = createInitialGameState("X");
 
       // Start with a near-draw board and make the final move
       // Board before final move: O X O / X X O / O O -

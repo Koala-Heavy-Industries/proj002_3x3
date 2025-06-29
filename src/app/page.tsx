@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { GameBoard } from "../components/GameBoard";
 import { useGameHistory } from "../hooks/useGameHistory";
-import type { GameResult, GameRecord } from "../types/game";
+import type { GameRecord } from "../types/game";
 
 export default function Home() {
-  const { games, stats, saveGame, clearAllGames } = useGameHistory();
+  const { stats, saveGame, clearAllGames } = useGameHistory();
   const [showStats, setShowStats] = useState(false);
 
   /**

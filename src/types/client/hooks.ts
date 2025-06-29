@@ -6,7 +6,6 @@ import type {
   GameState,
   BoardPosition,
   Player,
-  GameConfig,
   GameRecord,
   GameStats,
 } from "../common/game";

@@ -22,7 +22,7 @@ export class AIPlayer {
    * @param player AIのプレイヤー (X または O)
    * @returns 選択された位置 (0-8)
    */
-  public getNextMove(board: BoardCell[], _player: Player): BoardPosition {
+  public getNextMove(board: BoardCell[]): BoardPosition {
     switch (this.difficulty) {
       case "easy":
         return this.getRandomMove(board);
@@ -107,5 +107,5 @@ export function getAIMove(
   difficulty: "easy" | "medium" | "hard" = "easy"
 ): BoardPosition {
   const ai = new AIPlayer(difficulty);
-  return ai.getNextMove(board, player);
+  return ai.getNextMove(board);
 }

@@ -86,7 +86,7 @@ export class LocalStorageRepository implements GameRepository {
   /**
    * ゲーム記録の妥当性をチェック
    */
-  private isValidGameRecord(game: any): game is GameRecord {
+  private isValidGameRecord(game: unknown): game is GameRecord {
     return (
       game &&
       typeof game.id === "string" &&

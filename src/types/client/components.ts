@@ -5,7 +5,6 @@
 import type {
   Player,
   GameMode,
-  GameResult,
   BoardPosition,
   GameConfig,
   GameRecord,
