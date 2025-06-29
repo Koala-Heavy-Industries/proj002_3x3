@@ -12,39 +12,39 @@ classDiagram
         <<type>>
         +string: "X" | "O"
     }
-    
+
     class BoardPosition {
         <<type>>
         +number: 0|1|2|3|4|5|6|7|8
     }
-    
+
     class BoardCell {
         <<type>>
         +null | Player
     }
-    
+
     class GameMode {
         <<type>>
         +string: "pvp" | "pvc"
     }
-    
+
     class GameStatus {
         <<type>>
         +string: "playing" | "finished" | "draw"
     }
-    
+
     class GameResult {
         <<type>>
         +Player | "draw"
     }
-    
+
     class Move {
         <<interface>>
         +player: Player
         +position: BoardPosition
         +timestamp: number
     }
-    
+
     class GameState {
         <<interface>>
         +board: BoardCell[]
@@ -53,7 +53,7 @@ classDiagram
         +winner: null | Player
         +moves: Move[]
     }
-    
+
     class GameRecord {
         <<interface>>
         +id: string
@@ -64,20 +64,20 @@ classDiagram
         +duration: number
         +playerXStarts: boolean
     }
-    
+
     class WinCondition {
         <<interface>>
         +positions: [BoardPosition, BoardPosition, BoardPosition]
         +player: Player
     }
-    
+
     class GameConfig {
         <<interface>>
         +mode: GameMode
         +playerXStarts: boolean
         +aiDifficulty?: "easy" | "medium" | "hard"
     }
-    
+
     class GameRepository {
         <<interface>>
         +saveGame(game: GameRecord): Promise~void~
@@ -85,7 +85,7 @@ classDiagram
         +deleteGame(id: string): Promise~void~
         +clearAll(): Promise~void~
     }
-    
+
     class GameStats {
         <<interface>>
         +totalGames: number
@@ -95,7 +95,7 @@ classDiagram
         +longestGame: number
         +shortestGame: number
     }
-    
+
     %% 関係性
     BoardCell --> Player : contains
     Move --> Player : references
@@ -112,7 +112,7 @@ classDiagram
     GameConfig --> GameMode : references
     GameRepository --> GameRecord : operates on
     GameStats --> Player : references (in wins object)
-    
+
     style Player fill:#ffebee
     style BoardPosition fill:#e8f5e8
     style GameState fill:#e3f2fd
@@ -149,35 +149,35 @@ type GameResult = Player | "draw";
 ```typescript
 // 手順の詳細情報
 interface Move {
-  player: Player;           // 手を打ったプレイヤー
-  position: BoardPosition;  // 位置（型安全）
-  timestamp: number;        // タイムスタンプ（ミリ秒）
+  player: Player; // 手を打ったプレイヤー
+  position: BoardPosition; // 位置（型安全）
+  timestamp: number; // タイムスタンプ（ミリ秒）
 }
 
 // ゲーム状態の完全な定義
 interface GameState {
-  board: BoardCell[];       // 9要素の配列（型安全）
-  currentPlayer: Player;    // 現在のターン
-  gameStatus: GameStatus;   // ゲームの進行状態
-  winner: null | Player;    // 勝者（未決定時はnull）
-  moves: Move[];           // 手順履歴（順序保証）
+  board: BoardCell[]; // 9要素の配列（型安全）
+  currentPlayer: Player; // 現在のターン
+  gameStatus: GameStatus; // ゲームの進行状態
+  winner: null | Player; // 勝者（未決定時はnull）
+  moves: Move[]; // 手順履歴（順序保証）
 }
 
 // 永続化用ゲーム記録
 interface GameRecord {
-  id: string;              // UUID等のユニークID
-  timestamp: number;       // ゲーム開始時刻
-  gameMode: GameMode;      // 対戦モード
-  moves: Move[];          // 完全な手順履歴
-  result: GameResult;     // 最終結果
-  duration: number;       // ゲーム時間（秒）
+  id: string; // UUID等のユニークID
+  timestamp: number; // ゲーム開始時刻
+  gameMode: GameMode; // 対戦モード
+  moves: Move[]; // 完全な手順履歴
+  result: GameResult; // 最終結果
+  duration: number; // ゲーム時間（秒）
   playerXStarts: boolean; // 先攻情報
 }
 
 // 勝利条件の定義
 interface WinCondition {
   positions: [BoardPosition, BoardPosition, BoardPosition]; // タプル型で固定長
-  player: Player;                                           // 勝利プレイヤー
+  player: Player; // 勝利プレイヤー
 }
 ```
 
@@ -189,17 +189,17 @@ classDiagram
         <<function type>>
         +(position: BoardPosition) => void
     }
-    
+
     class GameResetHandler {
         <<function type>>
         +() => void
     }
-    
+
     class GameModeChangeHandler {
         <<function type>>
         +(mode: GameMode) => void
     }
-    
+
     class UseGameReturn {
         <<interface>>
         +gameState: GameState
@@ -208,13 +208,13 @@ classDiagram
         +isGameFinished: boolean
         +canMakeMove: (position: BoardPosition) => boolean
     }
-    
+
     class GameBoardProps {
         <<interface>>
         +config?: Partial~GameConfig~
         +onGameEnd?: (winner: GameResult) => void
     }
-    
+
     %% 関係性
     CellClickHandler --> BoardPosition : parameter
     GameModeChangeHandler --> GameMode : parameter
@@ -223,7 +223,7 @@ classDiagram
     UseGameReturn --> Player : parameter
     GameBoardProps --> GameConfig : partial reference
     GameBoardProps --> GameResult : callback parameter
-    
+
     style UseGameReturn fill:#e3f2fd
     style GameBoardProps fill:#e8f5e8
     style CellClickHandler fill:#fff3e0
@@ -248,8 +248,8 @@ interface UseGameReturn {
 
 // コンポーネントプロパティ型
 interface GameBoardProps {
-  config?: Partial<GameConfig>;                    // 部分的設定（オプション）
-  onGameEnd?: (winner: GameResult) => void;       // ゲーム終了コールバック
+  config?: Partial<GameConfig>; // 部分的設定（オプション）
+  onGameEnd?: (winner: GameResult) => void; // ゲーム終了コールバック
 }
 ```
 
@@ -263,33 +263,33 @@ graph TB
         GameMode[GameMode<br/>"pvp" | "pvc"]
         GameStatus[GameStatus<br/>"playing" | ...]
     end
-    
+
     subgraph "Union型"
         BoardCell[BoardCell<br/>null | Player]
         GameResult[GameResult<br/>Player | "draw"]
     end
-    
+
     subgraph "基本インターフェース"
         Move[Move<br/>player, position, timestamp]
         WinCondition[WinCondition<br/>positions, player]
     end
-    
+
     subgraph "複合インターフェース"
         GameState[GameState<br/>board, currentPlayer, ...]
         GameConfig[GameConfig<br/>mode, playerXStarts, ...]
         GameRecord[GameRecord<br/>id, timestamp, moves, ...]
     end
-    
+
     subgraph "統計・リポジトリ"
         GameStats[GameStats<br/>totalGames, wins, ...]
         GameRepository[GameRepository<br/>saveGame, loadGames, ...]
     end
-    
+
     subgraph "React型"
         UseGameReturn[UseGameReturn<br/>gameState, makeMove, ...]
         GameBoardProps[GameBoardProps<br/>config, onGameEnd]
     end
-    
+
     %% 依存関係
     BoardCell --> Player
     GameResult --> Player
@@ -297,26 +297,26 @@ graph TB
     Move --> BoardPosition
     WinCondition --> BoardPosition
     WinCondition --> Player
-    
+
     GameState --> BoardCell
     GameState --> Player
     GameState --> GameStatus
     GameState --> Move
-    
+
     GameConfig --> GameMode
     GameRecord --> GameMode
     GameRecord --> Move
     GameRecord --> GameResult
-    
+
     GameStats --> Player
     GameRepository --> GameRecord
-    
+
     UseGameReturn --> GameState
     UseGameReturn --> BoardPosition
     UseGameReturn --> Player
     GameBoardProps --> GameConfig
     GameBoardProps --> GameResult
-    
+
     style Player fill:#ffebee
     style BoardPosition fill:#e8f5e8
     style GameState fill:#e3f2fd
@@ -357,7 +357,9 @@ interface GameState {
 }
 
 // 型ガードによる安全なアクセス
-function isGameFinished(state: GameState): state is GameState & { winner: Player } {
+function isGameFinished(
+  state: GameState
+): state is GameState & { winner: Player } {
   return state.gameStatus === "finished" && state.winner !== null;
 }
 ```
@@ -372,7 +374,7 @@ classDiagram
         +load(): Promise~T[]~
         +delete(id: string): Promise~void~
     }
-    
+
     class LocalStorageRepository {
         <<concrete class>>
         +implements Repository~GameRecord~
@@ -381,7 +383,7 @@ classDiagram
         +load(): Promise~GameRecord[]~
         +delete(id: string): Promise~void~
     }
-    
+
     class FirebaseRepository {
         <<future class>>
         +implements Repository~GameRecord~
@@ -390,10 +392,10 @@ classDiagram
         +load(): Promise~GameRecord[]~
         +delete(id: string): Promise~void~
     }
-    
+
     Repository~T~ <|-- LocalStorageRepository : implements
     Repository~T~ <|-- FirebaseRepository : implements
-    
+
     style Repository~T~ fill:#fff3e0
     style LocalStorageRepository fill:#e8f5e8
     style FirebaseRepository fill:#f3e5f5
@@ -413,11 +415,11 @@ interface Repository<T> {
 // 具体的な実装
 class LocalStorageRepository implements Repository<GameRecord> {
   private readonly STORAGE_KEY = "tic-tac-toe-games";
-  
+
   async save(game: GameRecord): Promise<void> {
     // 実装
   }
-  
+
   async load(): Promise<GameRecord[]> {
     // 実装
   }
@@ -474,8 +476,8 @@ type GameRecordInput = Omit<GameRecord, "id" | "timestamp">;
 type PlayerStats = Record<Player, number>;
 
 // 条件型: 型レベルの条件分岐
-type GameModeConfig<T extends GameMode> = T extends "pvc" 
-  ? AIGameConfig 
+type GameModeConfig<T extends GameMode> = T extends "pvc"
+  ? AIGameConfig
   : BaseGameConfig;
 ```
 

@@ -1,4 +1,16 @@
-// Type Definitions
-export * from "./game";
+/**
+ * 型定義のエクスポート
+ */
 
-// 三目並べゲームで使用する全ての型定義をエクスポート
+// 共通型定義
+export * from "./common";
+
+// クライアント専用型定義
+export * from "./client";
+
+// 後方互換性のため既存のgame.tsから個別エクスポート（重複回避）
+export type {
+  CellClickHandler as LegacyCellClickHandler,
+  GameResetHandler as LegacyGameResetHandler,
+  GameModeChangeHandler as LegacyGameModeChangeHandler,
+} from "./game";
